@@ -58,7 +58,6 @@ public class WorkerFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // Setup any handles to view objects here
         // EditText etFoo = (EditText) view.findViewById(R.id.etFoo);
-        ListView workersList = (ListView) view.findViewById(R.id.workerList);
 
         dialog = new ProgressDialog(getActivity());
         dialog.setMessage("Loading....");
@@ -66,42 +65,11 @@ public class WorkerFragment extends Fragment {
         if (WorkerHashChart.isEmpty()) {
             GetInfos(ChartURL);
         }
-        ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.list_white_text, al);
-        workersList.setAdapter(adapter);
-        workersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        else {
+            dialog.dismiss();
+        }
 
-                // Replace the contents of the container with the new fragment
-                Fragment fragment = new WorkerStatsFragment(workerObjects.get(position), (String) al.get(position),WorkerHashChart.get((String) al.get(position)));
-                getParentFragmentManager().beginTransaction()
-                        .setCustomAnimations(
-                                R.anim.slide_in,  // enter
-                                R.anim.fade_out,  // exit
-                                R.anim.fade_in,   // popEnter
-                                R.anim.slide_out  // popExit
-                        )
-                        .replace(R.id.monerado_main_frame, fragment)
-                        .addToBackStack(null)
-                        .commit();
-                /*
-                FragmentTransaction ft = getParentFragmentManager().beginTransaction();/
-                ft.replace(R.id.monerado_main_frame, new WorkerStatsFragment(workerObjects.get(position), (String) al.get(position)));
-                ft.setCustomAnimations(
-                        R.anim.slide_in,  // enter
-                        R.anim.fade_out,  // exit
-                        R.anim.fade_in,   // popEnter
-                        R.anim.slide_out  // popExit
-                );
-                ft.addToBackStack("Worker");
-                // or ft.add(R.id.your_placeholder, new FooFragment());
-                // Complete the changes added above
-                ft.commit();
-                */
-
-            }
-        });
-        dialog.dismiss();
+        setAdapterWorkerStats(view);
 
     }
 
@@ -164,7 +132,53 @@ public class WorkerFragment extends Fragment {
         }
 
         dialog.dismiss();
+
+
+
     }
+
+
+    public void setAdapterWorkerStats(View view) {
+        ListView workersList = (ListView) view.findViewById(R.id.workerList);
+        ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.list_white_text, al);
+        workersList.setAdapter(adapter);
+        workersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                // Replace the contents of the container with the new fragment
+                Fragment fragment = new WorkerStatsFragment(workerObjects.get(position), (String) al.get(position),WorkerHashChart.get((String) al.get(position)));
+                getParentFragmentManager().beginTransaction()
+                        .setCustomAnimations(
+                                R.anim.slide_in,  // enter
+                                R.anim.fade_out,  // exit
+                                R.anim.fade_in,   // popEnter
+                                R.anim.slide_out  // popExit
+                        )
+                        .replace(R.id.monerado_main_frame, fragment)
+                        .addToBackStack(null)
+                        .commit();
+                /*
+                FragmentTransaction ft = getParentFragmentManager().beginTransaction();/
+                ft.replace(R.id.monerado_main_frame, new WorkerStatsFragment(workerObjects.get(position), (String) al.get(position)));
+                ft.setCustomAnimations(
+                        R.anim.slide_in,  // enter
+                        R.anim.fade_out,  // exit
+                        R.anim.fade_in,   // popEnter
+                        R.anim.slide_out  // popExit
+                );
+                ft.addToBackStack("Worker");
+                // or ft.add(R.id.your_placeholder, new FooFragment());
+                // Complete the changes added above
+                ft.commit();
+                */
+
+            }
+        });
+
+    }
+
+
 /*
     public void refreshMe(View v) {
         StringRequest request = new StringRequest(url, new Response.Listener<String>() {

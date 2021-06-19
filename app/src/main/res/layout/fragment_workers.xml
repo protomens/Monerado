@@ -18,6 +18,7 @@
             android:layout_margin="10sp"
             android:clickable="true"
             android:onClick="refreshMe"
+            android:visibility="invisible"
             app:backgroundTint="#FFC107"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

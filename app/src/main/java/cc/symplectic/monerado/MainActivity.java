@@ -9,6 +9,7 @@ import com.android.volley.toolbox.Volley;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.widget.ArrayAdapter;
@@ -43,6 +44,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import java.io.File;
+
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -57,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        String remrigs;
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -78,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_home, R.id.nav_mo, R.id.nav_slideshow)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -95,8 +99,18 @@ public class MainActivity extends AppCompatActivity {
         ReadWriteGUID poolfiles = new ReadWriteGUID("pools.txt");
         String pools = poolfiles.readFromFile(getApplicationContext());
 
-        ReadWriteGUID workerRemrigs = new ReadWriteGUID("remrigs.json");
-        String remrigs = workerRemrigs.readFromFile(getApplicationContext());
+        File file = new File("remrigs.json");
+        if (file.exists()) {
+            Log.d("MA", "remrigs.json EXISTS! reading....");
+            ReadWriteGUID workerRemrigs = new ReadWriteGUID("remrigs.json");
+            remrigs = workerRemrigs.readFromFile(getApplicationContext());
+        }
+        else {
+            Log.d("MA", "remrigs.json does not exist! creating...");
+            ReadWriteGUID workerRemrigs = new ReadWriteGUID("remrigs.json");
+            workerRemrigs.writeToFile("{}", getApplicationContext());
+            remrigs = workerRemrigs.readFromFile(getApplicationContext());
+        }
 
         try { parseRemrigJSONFile(remrigs); }
         catch (JSONException e) { e.printStackTrace();}
