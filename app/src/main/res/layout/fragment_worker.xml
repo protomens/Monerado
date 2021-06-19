@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgroundm">
+
+    <LinearLayout
+        android:id="@+id/llwokerinfo"
+        android:layout_width="match_parent"
+        android:layout_height="20sp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        tools:ignore="MissingConstraints"
+        android:background="#A3222121"
+        android:weightSum = "2.2"
+        >
+
+        <TextView
+            android:id="@+id/textViewWorker"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:text="Worker"
+            android:textStyle="bold"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Hashrate (Raw / Pay) Kh/s"
+            android:textStyle="bold"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/white"
+
+        app:layout_constraintTop_toBottomOf="@+id/llwokerinfo" />
+    <LinearLayout
+        android:id="@+id/llhashrate"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@+id/llwokerinfo"
+        android:weightSum="2.2"
+        android:background="#A3222121">
+
+        <TextView
+            android:id="@+id/tv_WorkerName"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:text="Worker"
+            android:textStyle="bold"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+        <TextView
+            android:id="@+id/tv_HashRateRaw"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:layout_height="wrap_content"
+            android:text="Raw"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+        <TextView
+            android:id="@+id/tv_HashRatePay"
+            android:layout_width="0dp"
+            android:layout_weight=".4"
+            android:layout_height="wrap_content"
+            android:text="Pay"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+
+
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/white"
+
+        app:layout_constraintTop_toBottomOf="@+id/llhashrate" />
+    <LinearLayout
+        android:id="@+id/lltotalhash"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:layout_marginTop="0dp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@+id/llhashrate"
+        android:weightSum="2.2"
+        android:background="#A3222121">
+
+        <TextView
+            android:id="@+id/TextViewTH"
+            android:layout_width="0dp"
+            android:layout_weight="1.0"
+            android:layout_height="wrap_content"
+            android:text="Total Hashes:"
+            android:textAlignment="viewEnd"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/tv_totalhash"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/llvalidshares"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:layout_marginTop="0dp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@+id/lltotalhash"
+        android:weightSum="2.2"
+        android:background="#A3222121">
+
+        <TextView
+            android:id="@+id/TextViewVS"
+            android:layout_width="0dp"
+            android:layout_weight="1.0"
+            android:layout_height="wrap_content"
+            android:text="Valid Shares:"
+            android:textAlignment="viewEnd"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/tv_validshares"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/llinvalidshares"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:layout_marginTop="0dp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@+id/llvalidshares"
+        android:weightSum="2.2"
+        android:background="#A3222121">
+
+        <TextView
+            android:id="@+id/TextViewIS"
+            android:layout_width="0dp"
+            android:layout_weight="1.0"
+            android:layout_height="wrap_content"
+            android:text="Invalid Shares:"
+            android:textAlignment="viewEnd"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/tv_invalidshares"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+    </LinearLayout>
+
+    <com.anychart.AnyChartView
+        android:id="@+id/any_chart_view"
+        android:layout_width="match_parent"
+        android:layout_height="314dp"
+        android:layout_marginTop="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llinvalidshares" />
+
+
+    <LinearLayout
+        android:id="@+id/lladdremote"
+        android:layout_width="match_parent"
+        android:layout_height="75sp"
+        android:layout_marginBottom="130dp"
+        android:background="#A3222121"
+        android:gravity="top"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/any_chart_view"
+        android:weightSum="2.2">
+
+        <EditText
+            android:id="@+id/et_remrig"
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
+            android:hint="https://address:port"
+            android:textColorHint="@color/lblue"
+            android:textAlignment="textStart"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+
+        <ImageView
+            android:id="@+id/imageViewActionRemrig"
+            android:layout_width="0dp"
+            android:layout_height="43sp"
+            android:layout_marginTop="2sp"
+            android:layout_weight=".6"
+            android:layout_gravity="center"
+            android:clickable="true"
+            app:srcCompat="@drawable/start" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lluserpass"
+        android:layout_width="match_parent"
+        android:layout_height="35sp"
+        android:layout_marginTop="13dp"
+        android:background="#A3222121"
+        android:gravity="top"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/lladdremote"
+        android:weightSum="2.2">
+        <TextView
+            android:id="@+id/textviewUsername"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5sp"
+            android:hint="Username:"
+            android:textColorHint="@color/white"
+            android:textAlignment="textStart"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+        <EditText
+            android:id="@+id/et_username"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10sp"
+            android:hint="xmrig"
+            android:textColorHint="@color/lblue"
+            android:textAlignment="textStart"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/textviewPassword"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20sp"
+            android:hint="Password:"
+            android:textColorHint="@color/white"
+            android:textAlignment="textStart"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+        <EditText
+            android:id="@+id/et_password"
+            android:layout_width="0dp"
+            android:layout_weight=".7"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10sp"
+            android:hint="eVR5m#"
+            android:textColorHint="@color/lblue"
+            android:textAlignment="textStart"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+    </LinearLayout>
+
+
+    <ProgressBar
+        android:id="@+id/anyChartProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/any_chart_view"
+        android:layout_alignTop="@+id/any_chart_view"
+        android:layout_alignEnd="@+id/any_chart_view"
+        android:layout_alignBottom="@+id/any_chart_view"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/lblue"
+        android:progress="0"
+        android:scaleX=".314"
+        android:scaleY=".314"
+        app:layout_constraintStart_toStartOf="@+id/any_chart_view"
+        app:layout_constraintTop_toTopOf="@+id/any_chart_view"
+        android:visibility="invisible"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionBackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10sp"
+        android:clickable="true"
+        app:backgroundTint="#FFC107"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_revert" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgroundm">
+
+    <LinearLayout
+        android:id="@+id/llwokerinfo"
+        android:layout_width="match_parent"
+        android:layout_height="20sp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        tools:ignore="MissingConstraints"
+        android:background="#A3222121"
+        android:weightSum = "2.2"
+        >
+
+        <TextView
+            android:id="@+id/textViewWorker"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:text="Worker"
+            android:textStyle="bold"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Hashrate (Raw / Pay) Kh/s"
+            android:textStyle="bold"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@+id/llwokerinfo"
+
+        />
+    <LinearLayout
+        android:id="@+id/llhashrate"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@+id/llwokerinfo"
+        android:weightSum="2.2"
+        android:background="#A3222121">
+
+        <TextView
+            android:id="@+id/tv_WorkerName"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:text="Worker"
+            android:textStyle="bold"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+        <TextView
+            android:id="@+id/tv_HashRateRaw"
+            android:layout_width="0dp"
+            android:layout_weight=".5"
+            android:layout_height="wrap_content"
+            android:text="Raw"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+        <TextView
+            android:id="@+id/tv_HashRatePay"
+            android:layout_width="0dp"
+            android:layout_weight=".4"
+            android:layout_height="wrap_content"
+            android:text="Pay"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+
+
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@+id/llhashrate"
+
+        />
+    <LinearLayout
+        android:id="@+id/lltotalhash"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:layout_marginTop="0dp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@+id/llhashrate"
+        android:weightSum="2.2"
+        android:background="#A3222121">
+
+        <TextView
+            android:id="@+id/TextViewTH"
+            android:layout_width="0dp"
+            android:layout_weight="1.0"
+            android:layout_height="wrap_content"
+            android:text="Total Hashes:"
+            android:textAlignment="viewEnd"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/tv_totalhash"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/llvalidshares"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:layout_marginTop="0dp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@+id/lltotalhash"
+        android:weightSum="2.2"
+        android:background="#A3222121">
+
+        <TextView
+            android:id="@+id/TextViewVS"
+            android:layout_width="0dp"
+            android:layout_weight="1.0"
+            android:layout_height="wrap_content"
+            android:text="Valid Shares:"
+            android:textAlignment="viewEnd"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/tv_validshares"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/llinvalidshares"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:layout_marginTop="0dp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@+id/llvalidshares"
+        android:weightSum="2.2"
+        android:background="#A3222121">
+
+        <TextView
+            android:id="@+id/TextViewIS"
+            android:layout_width="0dp"
+            android:layout_weight="1.0"
+            android:layout_height="wrap_content"
+            android:text="Invalid Shares:"
+            android:textAlignment="viewEnd"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/tv_invalidshares"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/llamtpaid"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:layout_marginTop="0dp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@+id/llinvalidshares"
+        android:weightSum="2.2"
+        android:background="#A3222121">
+
+        <TextView
+            android:id="@+id/TextViewAMTPaid"
+            android:layout_width="0dp"
+            android:layout_weight="1.0"
+            android:layout_height="wrap_content"
+            android:text="Amount Paid:"
+            android:textAlignment="viewEnd"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/tv_amtpaid"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/llamtdue"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:layout_marginTop="0dp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@+id/llamtpaid"
+        android:weightSum="2.2"
+        android:background="#A3222121">
+
+        <TextView
+            android:id="@+id/TextViewAMTDue"
+            android:layout_width="0dp"
+            android:layout_weight="1.0"
+            android:layout_height="wrap_content"
+            android:text="Amount Due:"
+            android:textAlignment="viewEnd"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/tv_amtdue"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/lltxcount"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:layout_marginTop="0dp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@+id/llamtdue"
+        android:weightSum="2.2"
+        android:background="#A3222121">
+
+        <TextView
+            android:id="@+id/TextViewTXCount"
+            android:layout_width="0dp"
+            android:layout_weight="1.0"
+            android:layout_height="wrap_content"
+            android:text="TX Payments:"
+            android:textAlignment="viewEnd"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/tv_txcount"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+    </LinearLayout>
+
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionBackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10sp"
+        android:clickable="true"
+        app:backgroundTint="#FFC107"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_revert" />
+</androidx.constraintlayout.widget.ConstraintLayout>
