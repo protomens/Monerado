@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         ReadWriteGUID poolfiles = new ReadWriteGUID("pools.txt");
         String pools = poolfiles.readFromFile(getApplicationContext());
 
-        File file = new File("remrigs.json");
+        File file = new File(getApplicationContext().getFilesDir().getPath() + "/remrigs.json");
         if (file.exists()) {
             Log.d("MA", "remrigs.json EXISTS! reading....");
             ReadWriteGUID workerRemrigs = new ReadWriteGUID("remrigs.json");
