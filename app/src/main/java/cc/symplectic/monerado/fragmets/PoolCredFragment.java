@@ -7,8 +7,6 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 
-import java.util.ArrayList;
-
 import cc.symplectic.monerado.R;
 
 public class PoolCredFragment extends Fragment {

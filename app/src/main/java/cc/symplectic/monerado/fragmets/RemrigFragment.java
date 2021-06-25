@@ -5,8 +5,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -20,11 +23,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import cc.symplectic.monerado.Monerado;
 import cc.symplectic.monerado.R;
 import cc.symplectic.monerado.ReadWriteGUID;
 import cc.symplectic.monerado.RemrigWorker;
 import cc.symplectic.monerado.RetroRemrig;
+import cc.symplectic.monerado.WorkerNameObj;
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -35,6 +38,11 @@ public class RemrigFragment extends Fragment {
     public String RemrigURL;
     public String RemrigUSER;
     public String RemrigPASS;
+    private ArrayList<String> WorkerNames;
+
+    public RemrigFragment(ArrayList al) {
+        this.WorkerNames = al;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -45,6 +53,58 @@ public class RemrigFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         addRemrigListener(view);
+
+        ListView workersList = (ListView) view.findViewById(R.id.workerList);
+        ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.list_white_text, WorkerNames);
+        workersList.setAdapter(adapter);
+
+        addWorkersOnClickListener(workersList, view);
+        addWorkersLongOnClickListener(workersList, view);
+    }
+
+    public void addWorkersOnClickListener(ListView workersList, View v) {
+        workersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                HashMap<String, RemrigWorker> Moneradoremrig = new HashMap<String, RemrigWorker>();
+
+                ReadWriteGUID remrigFILE = new ReadWriteGUID("remrigs.json");
+                String remrigJSON = remrigFILE.readFromFile(view.getContext());
+                EditText et_worker = v.findViewById(R.id.et_workername);
+                try {
+                    Moneradoremrig = parseRemrigJSONFile(remrigJSON);
+                    et_worker.setText(workersList.getItemAtPosition(position).toString());
+                    et_worker = v.findViewById(R.id.et_remrig);
+                    et_worker.setText(Moneradoremrig.get(workersList.getItemAtPosition(position).toString()).getURL());
+                    et_worker = v.findViewById(R.id.et_username);
+                    et_worker.setText(Moneradoremrig.get(workersList.getItemAtPosition(position).toString()).getUsername());
+                    et_worker = v.findViewById(R.id.et_password);
+                    et_worker.setText(Moneradoremrig.get(workersList.getItemAtPosition(position).toString()).getPassword());
+                }
+                catch (JSONException | NullPointerException e) {
+                    et_worker = v.findViewById(R.id.et_remrig);
+                    et_worker.setText("");
+                    et_worker.setHint("https://address:port");
+                    et_worker = v.findViewById(R.id.et_username);
+                    et_worker.setText("");
+                    et_worker.setHint("xmrig");
+                    et_worker = v.findViewById(R.id.et_password);
+                    et_worker.setText("");
+                    et_worker.setHint("abc123");
+
+                }
+            }
+        });
+    }
+
+    public void addWorkersLongOnClickListener(ListView workerList, View v) {
+        workerList.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return false;
+            }
+        });
     }
 
     public void addRemrigListener(View view) {
@@ -81,6 +141,7 @@ public class RemrigFragment extends Fragment {
         remriget = v.findViewById(R.id.et_workername);
         this.WorkerName = remriget.getEditableText().toString();
 
+        Log.d("Remrig", "Worker: " + WorkerName + " URL: " + RemrigURL + " User: " + RemrigUSER + " Password: " + RemrigPASS);
 
         if(Remrig) {
             RemrigWorker remrig = new RemrigWorker(RemrigURL, RemrigUSER, RemrigPASS, false);
@@ -92,6 +153,10 @@ public class RemrigFragment extends Fragment {
             RemrigWorker remrig = new RemrigWorker(RemrigURL, RemrigUSER, RemrigPASS, true);
             SaveRemrigJSON(v, remrig);
             RetroRemrigAction("start", v);
+            try {
+                UpdateAdapter(v);
+            }
+            catch (JSONException e) {}
             Remrig = true;
         }
 
@@ -106,8 +171,8 @@ public class RemrigFragment extends Fragment {
         try {
             Moneradoremrig = parseRemrigJSONFile(remrigJSON);
             Moneradoremrig.put(WorkerName, remrig);
-            Log.d("RemFrag", "Worker: " + WorkerName);
-            Log.d("RemFrag", "Moneradoremrig: " + Moneradoremrig.toString());
+            //Log.d("RemFrag", "Worker: " + WorkerName);
+            //Log.d("RemFrag", "Moneradoremrig: " + Moneradoremrig.toString());
         }
         catch (JSONException e) { e.printStackTrace(); }
 
@@ -136,19 +201,37 @@ public class RemrigFragment extends Fragment {
         int k=0;
         for (JSONObject obj : workerObjects) {
             RemrigWorker remrig = new RemrigWorker(obj.getString("URL"), obj.getString("Username"), obj.getString("Password"), obj.getBoolean("state"));
-            //SaveRemrigJSON(remrig, al.get(k).toString());
             Moneradoremrig.put(al.get(k).toString(), remrig);
-
             k++;
         }
         return Moneradoremrig;
 
     }
 
+    private void UpdateAdapter(View view) throws JSONException {
+        ReadWriteGUID remrigFILE = new ReadWriteGUID("remrigs.json");
+        String remrigJSON = remrigFILE.readFromFile(view.getContext());
+        WorkerNameObj WNObj = new WorkerNameObj();
+
+        JSONObject object = new JSONObject(remrigJSON);
+        Iterator<String> keys2 = (Iterator<String>) object.keys();
+
+        while (keys2.hasNext()) {
+            String key = keys2.next();
+            WNObj.al.add(key);
+            //WNObj.workerObjects.add(object.getJSONObject(key));
+        }
+
+        ListView workersList = (ListView) view.findViewById(R.id.workerList);
+        ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.list_white_text, WNObj.al);
+        workersList.setAdapter(adapter);
+
+    }
+
     public void RetroRemrigAction(String action, View view) {
         Call<String> call  = RetroRemrig.getRetrofitInstance(this.WorkerName, view)
                 .create(RetroRemrig.ApiInterface.class)
-                .setRemrigAction(RetroRemrig.getAuthToken(), action);
+                .setRemrigAction(RemrigURL + "/api/xmrig" , RetroRemrig.getAuthToken(RemrigUSER, RemrigPASS), action);
 
         call.enqueue(new Callback<String>() {
 

@@ -2,18 +2,15 @@ package cc.symplectic.monerado.fragmets;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.R.layout;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -38,8 +35,6 @@ public class WorkerFragment extends Fragment {
     HashMap<String, ArrayList<Double>> WorkerHashChart = new HashMap<String, ArrayList<Double>>();
     ProgressDialog dialog;
 
-    // The onCreateView method is called when Fragment should create its View object hierarchy,
-    // either dynamically or via XML layout inflation.
 
     public WorkerFragment(ArrayList al, ArrayList<JSONObject> workerObjects)
     {
@@ -74,9 +69,7 @@ public class WorkerFragment extends Fragment {
     }
 
     private void GetInfos(String url) {
-        //Runs volley string request and then executes parseJsonData()
-        //which starts the WorkerStats fragment
-        //
+
         //Should probably Generalize parseJsonData() at some pointe.
 
 
@@ -122,10 +115,6 @@ public class WorkerFragment extends Fragment {
                 HashRates.add(Double.valueOf(tsobj.getString("hs2")));
             }
 
-            //Iterator<String> workerKeys = (Iterator<String>) obj.keys();
-            //while (workerKeys.hasNext()) {
-            //    JSONObject tsobj = obj.getJSONObject(workerKeys.next());
-            //}
             WorkerHashChart.put(String.valueOf(worker.get(k)), HashRates);
             HashRates = new ArrayList<>();
             k++;
@@ -136,7 +125,6 @@ public class WorkerFragment extends Fragment {
 
 
     }
-
 
     public void setAdapterWorkerStats(View view) {
         ListView workersList = (ListView) view.findViewById(R.id.workerList);
@@ -158,20 +146,6 @@ public class WorkerFragment extends Fragment {
                         .replace(R.id.monerado_main_frame, fragment)
                         .addToBackStack(null)
                         .commit();
-                /*
-                FragmentTransaction ft = getParentFragmentManager().beginTransaction();/
-                ft.replace(R.id.monerado_main_frame, new WorkerStatsFragment(workerObjects.get(position), (String) al.get(position)));
-                ft.setCustomAnimations(
-                        R.anim.slide_in,  // enter
-                        R.anim.fade_out,  // exit
-                        R.anim.fade_in,   // popEnter
-                        R.anim.slide_out  // popExit
-                );
-                ft.addToBackStack("Worker");
-                // or ft.add(R.id.your_placeholder, new FooFragment());
-                // Complete the changes added above
-                ft.commit();
-                */
 
             }
         });
@@ -179,25 +153,4 @@ public class WorkerFragment extends Fragment {
     }
 
 
-/*
-    public void refreshMe(View v) {
-        StringRequest request = new StringRequest(url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String string) {
-                parseJsonData(string);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Toast.makeText(getApplicationContext(), "Some error occurred!!", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-            }
-        });
-
-        RequestQueue rQueue = Volley.newRequestQueue(MainActivity.this);
-        rQueue.add(request);
-
-    }
-
- */
 }

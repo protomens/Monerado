@@ -213,11 +213,48 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/llcputemp"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:layout_marginTop="0dp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@+id/llinvalidshares"
+        android:weightSum="2.2"
+        android:background="#A3222121">
+
+        <TextView
+            android:id="@+id/TextViewCPU"
+            android:layout_width="0dp"
+            android:layout_weight="1.0"
+            android:layout_height="wrap_content"
+            android:text="CPU TEMP:"
+            android:textAlignment="viewEnd"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/tv_cputemp"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+    </LinearLayout>
+
     <com.anychart.AnyChartView
         android:id="@+id/any_chart_view"
         android:layout_width="match_parent"
         android:layout_height="314dp"
-        android:layout_marginTop="15sp"
+        android:layout_marginTop="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llinvalidshares" />
 

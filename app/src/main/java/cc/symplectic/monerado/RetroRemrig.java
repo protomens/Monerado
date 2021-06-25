@@ -1,9 +1,5 @@
 package cc.symplectic.monerado;
 
-
-
-import android.app.Activity;
-import android.app.Application;
 import android.util.Base64;
 import android.view.View;
 
@@ -14,9 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
-import cc.symplectic.monerado.fragmets.RemrigFragment;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -24,15 +18,14 @@ import retrofit2.http.GET;
 
 import retrofit2.http.Header;
 import retrofit2.http.Query;
-import cc.symplectic.monerado.Monerado;
+import retrofit2.http.Url;
+
 public class RetroRemrig  {
 
     private static Retrofit retrofit;
-    //private static final String BASE_URL = "https://70.243.162.148:5000";
-    //private static final String BASE_URL = "https://4f1150bf3f78.ngrok.io";
-    private static String BASE_URL;
-    private static String username;
-    private static String password;
+    private static  String BASE_URL;
+    private static  String username;
+    private static  String password;
 
     public static Retrofit getRetrofitInstance(String WorkerName, View view) {
         RemrigWorker remrig;
@@ -84,12 +77,13 @@ public class RetroRemrig  {
     public interface ApiInterface {
 
 
-        @GET("/api/xmrig")
-        Call<String> setRemrigAction(@Header("Authorization") String authKey, @Query("action") String action);
-
+        @GET()
+        Call<String> setRemrigAction(@Url String url, @Header("Authorization") String authKey, @Query("action") String action);
+        @GET()
+        Call<String> getCPUSensors(@Url String url, @Header("Authorization") String authKey);
 
     }
-    public static String getAuthToken() {
+    public static String getAuthToken(String username, String password) {
         byte[] data = new byte[0];
         try {
             data = (username + ":" + password).getBytes("UTF-8");

@@ -11,8 +11,6 @@ import android.widget.ListView;
 
 import androidx.fragment.app.Fragment;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 import cc.symplectic.monerado.R;
@@ -62,20 +60,6 @@ public class PoolListFragment extends Fragment {
                         .replace(R.id.monerado_main_frame, fragment)
                         .addToBackStack(null)
                         .commit();
-                /*
-                FragmentTransaction ft = getParentFragmentManager().beginTransaction();/
-                ft.replace(R.id.monerado_main_frame, new WorkerStatsFragment(workerObjects.get(position), (String) al.get(position)));
-                ft.setCustomAnimations(
-                        R.anim.slide_in,  // enter
-                        R.anim.fade_out,  // exit
-                        R.anim.fade_in,   // popEnter
-                        R.anim.slide_out  // popExit
-                );
-                ft.addToBackStack("Worker");
-                // or ft.add(R.id.your_placeholder, new FooFragment());
-                // Complete the changes added above
-                ft.commit();
-                */
 
             }
         });

@@ -1,7 +1,5 @@
 package cc.symplectic.monerado.fragmets;
 
-
-
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,6 +28,8 @@ import java.util.Iterator;
 
 import cc.symplectic.monerado.MainActivity;
 import cc.symplectic.monerado.R;
+import cc.symplectic.monerado.ReadWriteGUID;
+import cc.symplectic.monerado.WorkerNameObj;
 
 public class MenuFragment extends Fragment {
     ArrayList<String> MenuOptions;
@@ -64,8 +64,13 @@ public class MenuFragment extends Fragment {
                         GetInfos(WorkerURL, position);
                         break;
                     case 2:
-                        Fragment fragment = new RemrigFragment();
-                        RunMenuFragment(fragment);
+                        ReadWriteGUID remrigFILE = new ReadWriteGUID("remrigs.json");
+                        String remrigJSON = remrigFILE.readFromFile(view.getContext());
+                        try {
+                            parseJsonData(remrigJSON, 2);
+                        }
+                        catch (JSONException e) { e.printStackTrace(); }
+                        break;
 
                 }
             }
@@ -105,7 +110,7 @@ public class MenuFragment extends Fragment {
     void parseJsonData(String jsonString, int position) throws JSONException {
 
         JSONObject object = new JSONObject(jsonString);
-
+        WorkerNameObj WNObj = new WorkerNameObj();
 
         switch(position) {
             case 0:
@@ -122,51 +127,37 @@ public class MenuFragment extends Fragment {
                 RunMenuFragment(fragment);
                 break;
             case 1:
-                ArrayList al = new ArrayList();
-                ArrayList<JSONObject> workerObjects = new ArrayList<>();
+                //ArrayList al = new ArrayList();
+                //ArrayList<JSONObject> workerObjects = new ArrayList<>();
 
                 @SuppressWarnings("unchecked")
                 Iterator<String> keys = (Iterator<String>) object.keys();
                 while (keys.hasNext()) {
                     String key = keys.next();
-                    al.add(key);
-                    workerObjects.add(object.getJSONObject(key));
+                    WNObj.al.add(key);
+                    WNObj.workerObjects.add(object.getJSONObject(key));
                 }
-                Fragment fragment2 = new WorkerFragment(al, workerObjects);
+                Fragment fragment2 = new WorkerFragment(WNObj.al, WNObj.workerObjects);
                 RunMenuFragment(fragment2);
                 break;
+            case 2:
+                //ArrayList al2 = new ArrayList();
+                //ArrayList<JSONObject> workerObjects2 = new ArrayList<>();
+
+                @SuppressWarnings("unchecked")
+                Iterator<String> keys2 = (Iterator<String>) object.keys();
+                while (keys2.hasNext()) {
+                    String key = keys2.next();
+                    WNObj.al.add(key);
+                    //WNObj.workerObjects.add(object.getJSONObject(key));
+                }
+                Fragment fragment3 = new RemrigFragment(WNObj.al);
+                RunMenuFragment(fragment3);
         }
 
 
 
-        /*
-        getParentFragmentManager().beginTransaction()
-                .setCustomAnimations(
-                        R.anim.slide_in,  // enter
-                        R.anim.fade_out,  // exit
-                        R.anim.fade_in,   // popEnter
-                        R.anim.slide_out  // popExit
-                )
-                .replace(R.id.monerado_main_frame, fragment)
-                .addToBackStack(null)
-                .commit();
 
-
-
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        // Replace the contents of the container with the new fragment
-        ft.replace(R.id.monerado_main_frame, new WorkerFragment(al, workerObjects));
-        ft.setCustomAnimations(
-                R.anim.slide_in,  // enter
-                R.anim.fade_out,  // exit
-                R.anim.fade_in,   // popEnter
-                R.anim.slide_out  // popExit
-        );
-        ft.addToBackStack("Main");
-        // or ft.add(R.id.your_placeholder, new FooFragment());
-        // Complete the changes added above
-        ft.commit();
-        */
 
 
 
