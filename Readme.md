@@ -2,4 +2,4 @@
 Monero Pool Stats for Miners on Monero Pools 
 
 ## More at:
-http://eratosthen.es/monerado
+https://eratosthen.es/monerado
