@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgroundm">
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25sp"
+        android:layout_gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/payments" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="500sp"
+        android:id="@+id/paymentsList"
+        android:layout_marginTop="25sp"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        />
+
+    <LinearLayout
+        android:id="@+id/lltotalhash"
+        android:layout_width="match_parent"
+        android:layout_height="30sp"
+        android:layout_marginTop="35sp"
+        android:orientation="horizontal"
+        android:gravity="top"
+        app:layout_constraintTop_toBottomOf="@+id/paymentsList"
+        android:weightSum="2.2"
+        android:background="#A3222121">
+
+        <TextView
+            android:id="@+id/TextViewTotalPaid"
+            android:layout_width="0dp"
+            android:layout_weight="1.0"
+            android:layout_height="wrap_content"
+            android:text="Total Paid:"
+            android:textAlignment="textStart"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/tv_totalpaid"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="14sp"
+            />
+
+    </LinearLayout>
+</LinearLayout>

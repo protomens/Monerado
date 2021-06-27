@@ -18,6 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -154,14 +155,10 @@ public class MenuFragment extends Fragment {
                 Fragment fragment3 = new RemrigFragment(WNObj.al);
                 RunMenuFragment(fragment3);
         }
-
-
-
-
-
-
-
     }
+
+
+
     private void RunMenuFragment(Fragment fragment) {
         getParentFragmentManager().beginTransaction()
                 .setCustomAnimations(

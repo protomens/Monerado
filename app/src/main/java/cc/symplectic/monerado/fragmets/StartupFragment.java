@@ -10,6 +10,10 @@ import android.widget.ImageButton;
 
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+
 import cc.symplectic.monerado.MainActivity;
 import cc.symplectic.monerado.R;
 import cc.symplectic.monerado.ReadWriteGUID;
@@ -26,6 +30,16 @@ public class StartupFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addPool(view);
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                //        .setAction("Action", null).show();
+            }
+        });
+
         ImageButton moaddybtn = view.findViewById(R.id.imageButton);
         moaddybtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,6 +64,38 @@ public class StartupFragment extends Fragment {
         Fragment fragment = new MenuFragment(MainActivity.MainMenu);
         RunFragment(fragment);
         dialog.dismiss();
+
+    }
+
+    public void addPool (View view) {
+        ArrayList<String> PoolList = new ArrayList<>();
+
+        PoolList.add("Monero Ocean");
+        PoolList.add("Minexmr");
+        PoolList.add("SupportXMR");
+        PoolList.add("XMRPool");
+        PoolList.add("F2Pool");
+        PoolList.add("Hashcity");
+        PoolList.add("Hashvault");
+        PoolList.add("MoneroHash");
+        PoolList.add("Kryptex");
+        PoolList.add("C3Pool");
+        PoolList.add("XMRvsBeast");
+        PoolList.add("null");
+        PoolList.add("null");
+        PoolList.add("null");
+        PoolList.add("null");
+        PoolList.add("null");
+        PoolList.add("null");
+        PoolList.add("null");
+        PoolList.add("null");
+        PoolList.add("null");
+        PoolList.add("null");
+        PoolList.add("null");
+        PoolList.add("null");
+
+        Fragment fragment = new PoolListFragment(PoolList);
+        RunFragment(fragment);
 
     }
 

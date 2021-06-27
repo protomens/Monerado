@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
+
+        /*
         binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 //        .setAction("Action", null).show();
             }
         });
-
+*/
 
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
@@ -144,35 +146,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Will be useful in future releases
-    public void addPool (View view) {
-        ArrayList<String> PoolList = new ArrayList<>();
 
-        PoolList.add("Monero Ocean");
-        PoolList.add("Minexmr");
-        PoolList.add("SupportXMR");
-        PoolList.add("XMRPool");
-        PoolList.add("F2Pool");
-        PoolList.add("Hashcity");
-        PoolList.add("Hashvault");
-        PoolList.add("MoneroHash");
-        PoolList.add("Kryptex");
-        PoolList.add("C3Pool");
-        PoolList.add("XMRvsBeast");
-        PoolList.add("null");
-        PoolList.add("null");
-        PoolList.add("null");
-        PoolList.add("null");
-        PoolList.add("null");
-        PoolList.add("null");
-        PoolList.add("null");
-        PoolList.add("null");
-        PoolList.add("null");
-        PoolList.add("null");
-        PoolList.add("null");
-        PoolList.add("null");
-
-        Fragment fragment = new PoolListFragment(PoolList);
-        RunFragment(fragment);
-
-    }
 }
