@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
         MainMenu.add("General & Payment Info");
         MainMenu.add("Worker Stats");
+        MainMenu.add("Block Payments");
         MainMenu.add("Remrig");
         //MainMenu.add("Genral Pool Info");
         //MainMenu.add("Genral Pool Stats");

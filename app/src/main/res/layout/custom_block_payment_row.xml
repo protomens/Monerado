@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/tv_Date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:textColor="#00BCD4"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_datefound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="PCT"
+        android:textColor="@android:color/holo_orange_dark"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tv_pct"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="PCT"
+        android:textColor="#ED6847"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tv_xmr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="XMR"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:textStyle="bold|italic" />
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/white"
+        />
+
+
+</LinearLayout>

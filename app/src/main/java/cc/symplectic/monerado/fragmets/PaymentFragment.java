@@ -204,8 +204,7 @@ public class PaymentFragment extends Fragment {
             HashMap<String,String> TXDateAmt = new HashMap<>();
             JSONObject obj = array.getJSONObject(k);
             //TimeStamps.add();
-            Paid = obj.getString("amount");
-            BigDecimal XMR = new BigDecimal(Paid);
+            BigDecimal XMR = new BigDecimal(obj.getString("amount"));
             XMR = XMR.divide(Satoshi);
             //AmtPaid.add();
             //Timestamp ts = new Timestamp(Long.parseLong(obj.getString("ts")));
@@ -216,6 +215,7 @@ public class PaymentFragment extends Fragment {
             TXDateAmt.put("xmr", df.format(XMR));
             //Log.d("Pay", "Date: " + dateString + " XMR: " + String.valueOf(XMR));
             GettingPaid.add(TXDateAmt);
+            TXDateAmt = null;
         }
         return GettingPaid;
 
