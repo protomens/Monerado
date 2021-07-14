@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -166,24 +167,26 @@ public class MinerIdentifiersWorker extends Worker {
         notif.notify(0, notify);
         */
 
+
         Intent intent = new Intent(super.getApplicationContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(super.getApplicationContext(), 0, intent, 0);
 
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(super.getApplicationContext(), String.valueOf(R.string.CHANNEL_ID))
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(super.getApplicationContext(), MainActivity.NOTIFICATION_NAME)
                 .setSmallIcon(R.drawable.monerado_mountain_small)
                 .setContentTitle(Title)
                 .setContentText(MessagePreface)
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(Message))
                 .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true);
+
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(super.getApplicationContext());
         notificationManager.notify(l33t, builder.build());
 
     }
+
 
 }

@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="cc.symplectic.monerado">
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
 
     <application
         android:name=".Monerado"
@@ -12,6 +13,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Monerado"
          >
+        <!---
+        <service android:name=".MinerIdentifiersWorker"
+            tools:ignore="Instantiatable"
+            android:exported="true"
+            />
+            -->
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"

@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="lblue">#21AEEB</color>
     <color name="alphadarkgrey">#4D2C3133</color>
+    <color name="monerado">#FFFFB908</color>
+    <color name="monpurple">#FF1b0222</color>
 </resources>

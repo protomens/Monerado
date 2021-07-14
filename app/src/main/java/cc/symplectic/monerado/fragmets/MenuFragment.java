@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -51,41 +52,55 @@ public class MenuFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
-        return inflater.inflate(R.layout.fragment_workers, parent, false);
+        return inflater.inflate(R.layout.fragment_main_menu, parent, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
-        ListView menuList = view.findViewById(R.id.workerList);
-        ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.list_white_text, MenuOptions);
-        menuList.setAdapter(adapter);
-        menuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        setMenuIconsOnClickListener(view);
+    }
+
+    private void setMenuIconsOnClickListener(View v) {
+        ImageView Payments = v.findViewById(R.id.imageView4);
+        ImageView WorkerStats = v.findViewById(R.id.imageView5);
+        ImageView BlockPayments = v.findViewById(R.id.imageView8);
+        ImageView Remrig = v.findViewById(R.id.imageView10);
+
+        Payments.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch(position) {
-                    case 0:
-                        GetInfos(PaymentURL, position);
+            public void onClick(View v) {
+                GetInfos(PaymentURL, 0);
 
-                        break;
-                    case 1:
-                        GetInfos(WorkerURL, position);
-                        break;
-                    case 2:
-                        GetInfos(BlockPayURL, position);
-                        break;
-                    case 3:
-                        ReadWriteGUID remrigFILE = new ReadWriteGUID("remrigs.json");
-                        String remrigJSON = remrigFILE.readFromFile(view.getContext());
-                        try {
-                            parseJsonData(remrigJSON, 3);
-                        }
-                        catch (JSONException e) { e.printStackTrace(); }
-                        break;
-
-                }
             }
         });
+
+        WorkerStats.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GetInfos(WorkerURL, 1);
+            }
+        });
+
+        BlockPayments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GetInfos(BlockPayURL, 2);
+            }
+        });
+
+        Remrig.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ReadWriteGUID remrigFILE = new ReadWriteGUID("remrigs.json");
+                String remrigJSON = remrigFILE.readFromFile(v.getContext());
+                try {
+                    parseJsonData(remrigJSON, 3);
+                }
+                catch (JSONException e) { e.printStackTrace(); }
+            }
+        });
+
     }
 
     private void GetInfos(String url, int position) {

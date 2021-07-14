@@ -10,8 +10,8 @@ android {
         applicationId "cc.symplectic.monerado"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 12
-        versionName "0.5.0"
+        versionCode 15
+        versionName "0.6.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

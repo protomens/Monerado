@@ -2,6 +2,7 @@ package cc.symplectic.monerado;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,16 +10,32 @@ import android.view.View;
 import android.view.Menu;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.common.util.concurrent.ListenableFuture;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.BackoffPolicy;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.Operation;
 import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkContinuation;
+import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
+import androidx.work.WorkQuery;
+import androidx.work.WorkRequest;
+
+import org.jetbrains.annotations.NotNull;
 
 import cc.symplectic.monerado.databinding.ActivityMainBinding;
 import cc.symplectic.monerado.fragmets.MenuFragment;
@@ -28,6 +45,8 @@ import cc.symplectic.monerado.fragmets.StartupFragment;
 import java.util.ArrayList;
 
 import java.io.File;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
@@ -37,7 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     public static ArrayList<String> MainMenu = new ArrayList<>();
     public static String MOADDY;
-
+    private final static String WORKER_STATUS = "WORKER_STATUS";
+    private final static String WORKER_NAME = "WORKER_IDS_WORKER";
+    public final static String NOTIFICATION_NAME = "workerStatus";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,8 +192,8 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(String.valueOf(R.string.CHANNEL_ID), name, importance);
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_NAME, name, importance);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
@@ -182,12 +203,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createWorker() {
+
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
         PeriodicWorkRequest MinerIDs =
                 new PeriodicWorkRequest.Builder(MinerIdentifiersWorker.class, 15, TimeUnit.MINUTES)
-                        // Constraints
+                        .setConstraints(constraints)
+                        .setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+                        .addTag(WORKER_STATUS)
                         .build();
 
-        WorkManager.getInstance(this).enqueue(MinerIDs);
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(WORKER_NAME, ExistingPeriodicWorkPolicy.KEEP, MinerIDs);
 
 
     }
