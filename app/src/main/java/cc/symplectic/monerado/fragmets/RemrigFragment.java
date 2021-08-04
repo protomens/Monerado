@@ -72,6 +72,7 @@ public class RemrigFragment extends Fragment {
                 ReadWriteGUID remrigFILE = new ReadWriteGUID("remrigs.json");
                 String remrigJSON = remrigFILE.readFromFile(view.getContext());
                 EditText et_worker = v.findViewById(R.id.et_workername);
+                ImageView remrigActionButton = v.findViewById(R.id.imageViewActionRemrig);
                 try {
                     Moneradoremrig = parseRemrigJSONFile(remrigJSON);
                     et_worker.setText(workersList.getItemAtPosition(position).toString());
@@ -81,6 +82,13 @@ public class RemrigFragment extends Fragment {
                     et_worker.setText(Moneradoremrig.get(workersList.getItemAtPosition(position).toString()).getUsername());
                     et_worker = v.findViewById(R.id.et_password);
                     et_worker.setText(Moneradoremrig.get(workersList.getItemAtPosition(position).toString()).getPassword());
+                    Boolean actionValue = Moneradoremrig.get(workersList.getItemAtPosition(position).toString()).getState();
+                    if (actionValue) {
+                        remrigActionButton.setImageResource(R.drawable.stop);
+                    }
+                    else {
+                        remrigActionButton.setImageResource(R.drawable.start);
+                    }
                 }
                 catch (JSONException | NullPointerException e) {
                     et_worker = v.findViewById(R.id.et_remrig);

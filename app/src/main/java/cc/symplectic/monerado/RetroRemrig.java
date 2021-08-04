@@ -81,7 +81,10 @@ public class RetroRemrig  {
         Call<String> setRemrigAction(@Url String url, @Header("Authorization") String authKey, @Query("action") String action);
         @GET()
         Call<String> getCPUSensors(@Url String url, @Header("Authorization") String authKey);
-
+        @GET()
+        Call<String> getLastCoinMined(@Url String url, @Header("Authorization") String authKey);
+        @GET()
+        Call<String> getMemInfo(@Url String url, @Header("Authorization") String authKey);
     }
     public static String getAuthToken(String username, String password) {
         byte[] data = new byte[0];

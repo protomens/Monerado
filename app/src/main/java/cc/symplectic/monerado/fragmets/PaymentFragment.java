@@ -43,7 +43,7 @@ import cc.symplectic.monerado.WorkerNameObj;
 
 public class PaymentFragment extends Fragment {
     HashMap<String, String> PaymentInfos = new HashMap<String, String>();
-    BigDecimal Satoshi = new BigDecimal("1000000000000");
+    public static BigDecimal Satoshi = new BigDecimal("1000000000000");
     ProgressDialog dialog;
     String PaymentsURL = "https://api.moneroocean.stream/miner/" + MainActivity.MOADDY + "/payments";
 
@@ -167,7 +167,7 @@ public class PaymentFragment extends Fragment {
             public void onResponse(String string) {
                 try {
                     ArrayList<HashMap<String, String>> GettingPaid = new ArrayList<HashMap<String, String>>();
-                    GettingPaid = parseJsonData(string);
+                    GettingPaid = parseJsonData(string, false);
                     Fragment fragment = new PaymentsListFragment(GettingPaid);
                     RunFragment(fragment);
                     dialog.dismiss();
@@ -187,7 +187,7 @@ public class PaymentFragment extends Fragment {
         rQueue.add(request);
     }
 
-    private ArrayList<HashMap<String, String>> parseJsonData(String jsonString) throws JSONException {
+    public static ArrayList<HashMap<String, String>> parseJsonData(String jsonString, Boolean BlockWorker) throws JSONException {
 
         JSONArray array = new JSONArray(jsonString);
         //ArrayList<String> TimeStamps = new ArrayList<>();
@@ -199,23 +199,41 @@ public class PaymentFragment extends Fragment {
         String Paid;
 
         int len_array = array.length();
-
-        for (int k = 0; k < len_array; k++) {
+        if (BlockWorker) {
             HashMap<String,String> TXDateAmt = new HashMap<>();
-            JSONObject obj = array.getJSONObject(k);
+            JSONObject obj = array.getJSONObject(0);
             //TimeStamps.add();
             BigDecimal XMR = new BigDecimal(obj.getString("amount"));
-            XMR = XMR.divide(Satoshi);
+            XMR = XMR.divide(PaymentFragment.Satoshi);
             //AmtPaid.add();
             //Timestamp ts = new Timestamp(Long.parseLong(obj.getString("ts")));
-            Date d = new Date((long)(Long.parseLong(obj.getString("ts"))*1000));
-            SimpleDateFormat DateFor = new SimpleDateFormat("EEE, d MMM yyyy hh:mm:ss aaa");
-            String dateString = DateFor.format(d);
-            TXDateAmt.put("date", dateString);
+            //Date d = new Date((long)(Long.parseLong(obj.getString("ts"))*1000));
+            //SimpleDateFormat DateFor = new SimpleDateFormat("EEE, d MMM yyyy hh:mm:ss aaa");
+            //String dateString = DateFor.format(d);
+            TXDateAmt.put("date", obj.getString("ts"));
             TXDateAmt.put("xmr", df.format(XMR));
             //Log.d("Pay", "Date: " + dateString + " XMR: " + String.valueOf(XMR));
             GettingPaid.add(TXDateAmt);
             TXDateAmt = null;
+        }
+        else {
+            for (int k = 0; k < len_array; k++) {
+                HashMap<String, String> TXDateAmt = new HashMap<>();
+                JSONObject obj = array.getJSONObject(k);
+                //TimeStamps.add();
+                BigDecimal XMR = new BigDecimal(obj.getString("amount"));
+                XMR = XMR.divide(PaymentFragment.Satoshi);
+                //AmtPaid.add();
+                //Timestamp ts = new Timestamp(Long.parseLong(obj.getString("ts")));
+                Date d = new Date((long) (Long.parseLong(obj.getString("ts")) * 1000));
+                SimpleDateFormat DateFor = new SimpleDateFormat("EEE, d MMM yyyy hh:mm:ss aaa");
+                String dateString = DateFor.format(d);
+                TXDateAmt.put("date", dateString);
+                TXDateAmt.put("xmr", df.format(XMR));
+                //Log.d("Pay", "Date: " + dateString + " XMR: " + String.valueOf(XMR));
+                GettingPaid.add(TXDateAmt);
+                TXDateAmt = null;
+            }
         }
         return GettingPaid;
 

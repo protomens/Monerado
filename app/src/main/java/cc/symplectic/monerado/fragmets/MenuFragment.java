@@ -40,14 +40,14 @@ import cc.symplectic.monerado.ReadWriteGUID;
 import cc.symplectic.monerado.WorkerNameObj;
 
 public class MenuFragment extends Fragment {
-    ArrayList<String> MenuOptions;
     ProgressDialog dialog;
     String WorkerURL = "https://api.moneroocean.stream/miner/" + MainActivity.MOADDY + "/stats/allWorkers";
     String PaymentURL = "https://api.moneroocean.stream/miner/" + MainActivity.MOADDY + "/stats";
     String BlockPayURL = "https://api.moneroocean.stream/miner/"+ MainActivity.MOADDY + "/block_payments?limit=100";
+    private static BigDecimal TotalBlockPayment = new BigDecimal(0.0);
 
-    public MenuFragment(ArrayList<String> MenuOptions) {
-        this.MenuOptions = MenuOptions;
+    public MenuFragment() {
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -66,6 +66,7 @@ public class MenuFragment extends Fragment {
         ImageView WorkerStats = v.findViewById(R.id.imageView5);
         ImageView BlockPayments = v.findViewById(R.id.imageView8);
         ImageView Remrig = v.findViewById(R.id.imageView10);
+        ImageView WarriorV = v.findViewById(R.id.imageView7);
 
         Payments.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,6 +99,14 @@ public class MenuFragment extends Fragment {
                     parseJsonData(remrigJSON, 3);
                 }
                 catch (JSONException e) { e.printStackTrace(); }
+            }
+        });
+
+        WarriorV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment WarriorVMinerFrag = new WarriorVMinerFragment();
+                RunMenuFragment(WarriorVMinerFrag, "XMRIG");
             }
         });
 
@@ -137,8 +146,10 @@ public class MenuFragment extends Fragment {
         JSONObject object = null;
         WorkerNameObj WNObj = new WorkerNameObj();
         JSONArray jsonArray;
+        ArrayList<HashMap<String, String>> blockPayments = new ArrayList<HashMap<String, String>>();
+        MathContext mc = new MathContext(12);
 
-        DecimalFormat df = new DecimalFormat("#.#####################");
+
 
         if (position != 2) {
             object = new JSONObject(jsonString);
@@ -148,16 +159,10 @@ public class MenuFragment extends Fragment {
         switch(position) {
             case 0:
                 HashMap<String, String> PaymentInfos = new HashMap<String, String>();
-                PaymentInfos.put("RawHash", object.getString("hash"));
-                PaymentInfos.put("PayHash", object.getString("hash2"));
-                PaymentInfos.put("TotalHash", object.getString("totalHashes"));
-                PaymentInfos.put("Vshares", object.getString("validShares"));
-                PaymentInfos.put("Ishares", object.getString("invalidShares"));
-                PaymentInfos.put("AmtPaid", object.getString("amtPaid"));
-                PaymentInfos.put("AmtDue", object.getString("amtDue"));
-                PaymentInfos.put("PayCount", object.getString("txnCount"));
+                try { PaymentInfos = parsePaymentInfos(object); }
+                catch (JSONException e) { e.printStackTrace();}
                 Fragment fragment = new PaymentFragment(PaymentInfos);
-                RunMenuFragment(fragment);
+                RunMenuFragment(fragment, "PAYMENTS");
                 break;
             case 1:
                 //ArrayList al = new ArrayList();
@@ -171,32 +176,18 @@ public class MenuFragment extends Fragment {
                     WNObj.workerObjects.add(object.getJSONObject(key));
                 }
                 Fragment fragment2 = new WorkerFragment(WNObj.al, WNObj.workerObjects);
-                RunMenuFragment(fragment2);
+                RunMenuFragment(fragment2, "WORKERS");
                 break;
             case 2:
-                ArrayList<HashMap<String, String>> blockPayments = new ArrayList<HashMap<String, String>>();
-                jsonArray = new JSONArray(jsonString);
-                BigDecimal TotalBlockPayment = new BigDecimal(0.0);
-                MathContext mc = new MathContext(12);
-                for (int k = 0; k < jsonArray.length(); k++) {
-                    HashMap<String, String> bpay = new HashMap<String, String>();
-                    JSONObject jsonObject = jsonArray.getJSONObject(k);
-                    Date d = new Date((long) (Long.parseLong(jsonObject.getString("ts")) * 1000));
-                    SimpleDateFormat DateFor = new SimpleDateFormat("EEE, d MMM yyyy hh:mm:ss aaa");
-                    bpay.put("date", DateFor.format(d));
-                    d = new Date((long) (Long.parseLong(jsonObject.getString("ts_found")) * 1000));
-                    bpay.put("datefound", "Date Found: " + DateFor.format(d));
-                    BigDecimal bigDecimal = new BigDecimal(jsonObject.get("value_percent").toString());
-                    bpay.put("pct", df.format(bigDecimal) + "%");
-                    bigDecimal = new BigDecimal(jsonObject.get("value").toString());
-                    bpay.put("xmr", df.format(bigDecimal) + " XMR");
-                    TotalBlockPayment = TotalBlockPayment.add(bigDecimal);
-                    blockPayments.add(bpay);
-                    //Log.d("BPAY", "date: " + dateString + " pct: " + blockPayments.get(k).get("pct").toString() + " amt: " +blockPayments.get(k).get("xmr").toString());
-                    bpay = null;
+                /*try {
+                    TotalBlockPayment = new BigDecimal(0.0);
+                    blockPayments = parseBlockPayments(jsonString, true);
                 }
-                Fragment fragment0 = new BlockPaymentFragment(blockPayments, String.valueOf(TotalBlockPayment.round(mc)));
-                RunMenuFragment(fragment0);
+                catch (JSONException e) { e.printStackTrace(); }
+
+                 */
+                Fragment fragment0 = new BlockPaymentFragment();
+                RunMenuFragment(fragment0, "BLOCK_PAYMENTS");
                 break;
             case 3:
                 //ArrayList al2 = new ArrayList();
@@ -214,13 +205,72 @@ public class MenuFragment extends Fragment {
                 }
                 catch (Exception e)  { e.printStackTrace(); }
                 Fragment fragment3 = new RemrigFragment(WNObj.al);
-                RunMenuFragment(fragment3);
+                RunMenuFragment(fragment3, "REMRIG");
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + position);
         }
     }
 
+    public static ArrayList<HashMap<String, String>>  parseBlockPayments(String jsonString, Boolean NewData) throws JSONException {
+        JSONArray jsonArray;
+        ArrayList<HashMap<String, String>> blockPayments = new ArrayList<HashMap<String, String>>();
+        DecimalFormat df = new DecimalFormat("#.#####################");
+        SimpleDateFormat DateFor = new SimpleDateFormat("EEE, d MMM yyyy hh:mm:ss aaa");
+        jsonArray = new JSONArray(jsonString);
 
+        if (NewData) {
+            for (int k = 0; k < jsonArray.length(); k++) {
+                HashMap<String, String> bpay = new HashMap<String, String>();
+                JSONObject jsonObject = jsonArray.getJSONObject(k);
+                //Date d = new Date((long) (Long.parseLong(jsonObject.getString("ts")) * 1000));
+                //bpay.put("ts", DateFor.format(d));
+                bpay.put("ts", jsonObject.getString("ts"));
+                //d = new Date((long) (Long.parseLong(jsonObject.getString("ts_found")) * 1000));
+                //bpay.put("ts_found", "Date Found: " + DateFor.format(d));
+                bpay.put("ts_found", jsonObject.getString("ts_found"));
+                BigDecimal bigDecimal = new BigDecimal(jsonObject.get("value_percent").toString());
+                //bpay.put("value_percent", df.format(bigDecimal) + "%");
+                bpay.put("value_percent", df.format(bigDecimal));
+                bigDecimal = new BigDecimal(jsonObject.get("value").toString());
+                //bpay.put("value", df.format(bigDecimal) + " XMR");
+                bpay.put("value", df.format(bigDecimal));
+                //TotalBlockPayment = TotalBlockPayment.add(bigDecimal);
+                blockPayments.add(bpay);
+                bpay = null;
+            }
+        }
+        else {
+            for (int k = 0; k < jsonArray.length(); k++) {
+                HashMap<String, String> bpay = new HashMap<String, String>();
+                JSONObject jsonObject = jsonArray.getJSONObject(k);
+                bpay.put("ts", jsonObject.getString("ts"));
+                bpay.put("ts_found", jsonObject.getString("ts_found"));
+                bpay.put("value_percent", jsonObject.get("value_percent").toString());
+                bpay.put("value", jsonObject.get("value").toString());
+                //TotalBlockPayment = TotalBlockPayment.add(bigDecimal);
+                blockPayments.add(bpay);
+                bpay = null;
+            }
+        }
+        return blockPayments;
+    }
 
-    private void RunMenuFragment(Fragment fragment) {
+    public static HashMap<String, String> parsePaymentInfos(JSONObject object) throws JSONException {
+        HashMap<String, String> PaymentInfos = new HashMap<String, String>();
+
+        PaymentInfos.put("RawHash", object.getString("hash"));
+        PaymentInfos.put("PayHash", object.getString("hash2"));
+        PaymentInfos.put("TotalHash", object.getString("totalHashes"));
+        PaymentInfos.put("Vshares", object.getString("validShares"));
+        PaymentInfos.put("Ishares", object.getString("invalidShares"));
+        PaymentInfos.put("AmtPaid", object.getString("amtPaid"));
+        PaymentInfos.put("AmtDue", object.getString("amtDue"));
+        PaymentInfos.put("PayCount", object.getString("txnCount"));
+        return PaymentInfos;
+    }
+
+    private void RunMenuFragment(Fragment fragment, String TAG) {
         getParentFragmentManager().beginTransaction()
                 .setCustomAnimations(
                         R.anim.slide_in,  // enter
@@ -229,7 +279,7 @@ public class MenuFragment extends Fragment {
                         R.anim.slide_out  // popExit
                 )
                 .replace(R.id.monerado_main_frame, fragment)
-                .addToBackStack(null)
+                .addToBackStack(TAG)
                 .commit();
 
         try {

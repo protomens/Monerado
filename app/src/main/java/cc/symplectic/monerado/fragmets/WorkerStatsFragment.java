@@ -281,6 +281,8 @@ public class WorkerStatsFragment extends  Fragment {
                 IVremrig.setImageResource(R.drawable.start);
             }
             RetroRemrigSensors(v);
+            RetroRemrigCoin(v);
+            RetroRemrigMem(v);
         }
         catch (NullPointerException e) { Log.w("Remrig", "No remrig data."); }
 
@@ -459,6 +461,72 @@ public class WorkerStatsFragment extends  Fragment {
                     else {
                         cputemp.setText("null");
                         Log.d("RetRem", "ID10T CPU TEMP ERROR");
+                    }
+                }
+                catch (Exception e) { Log.d("Retro", "Failed: "  + e.getMessage() + e.getStackTrace()); }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("Retro", "Failed: " + t.getMessage() + t.getStackTrace() + t.getCause() + t.getSuppressed() + t.getLocalizedMessage());
+            }
+        });
+    }
+
+    public void RetroRemrigCoin(View view) {
+        Call<String> call  = RetroRemrig.getRetrofitInstance(this.WorkerName, view)
+                .create(RetroRemrig.ApiInterface.class)
+                .getLastCoinMined(RemrigURL + "/api/coin", RetroRemrig.getAuthToken(RemrigUSER, RemrigPASS));
+
+        call.enqueue(new Callback<String>() {
+
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                String retCodeList = response.body();
+                try {
+                    String rc = retCodeList;
+                    TextView coin = view.findViewById(R.id.tv_coin);
+                    if (! rc.isEmpty()) {
+                        coin.setText(rc);
+                        Log.d("RetRem", "COIN: " + rc);
+
+                    }
+                    else {
+                        coin.setText("null");
+                        Log.d("RetRem", "ID10T COIN ERROR");
+                    }
+                }
+                catch (Exception e) { Log.d("Retro", "Failed: "  + e.getMessage() + e.getStackTrace()); }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("Retro", "Failed: " + t.getMessage() + t.getStackTrace() + t.getCause() + t.getSuppressed() + t.getLocalizedMessage());
+            }
+        });
+    }
+
+    public void RetroRemrigMem(View view) {
+        Call<String> call  = RetroRemrig.getRetrofitInstance(this.WorkerName, view)
+                .create(RetroRemrig.ApiInterface.class)
+                .getMemInfo(RemrigURL + "/api/mem", RetroRemrig.getAuthToken(RemrigUSER, RemrigPASS));
+
+        call.enqueue(new Callback<String>() {
+
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                String retCodeList = response.body();
+                try {
+                    String rc = retCodeList;
+                    TextView mem = view.findViewById(R.id.tv_mem);
+                    if (! rc.isEmpty()) {
+                        mem.setText(rc + "MiB");
+                        Log.d("RetRem", "COIN: " + rc);
+
+                    }
+                    else {
+                        mem.setText("null");
+                        Log.d("RetRem", "ID10T COIN ERROR");
                     }
                 }
                 catch (Exception e) { Log.d("Retro", "Failed: "  + e.getMessage() + e.getStackTrace()); }

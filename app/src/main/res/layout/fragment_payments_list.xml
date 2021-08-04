@@ -28,6 +28,15 @@
         android:text="Last 100 Blocks"
         android:textStyle="italic"
         android:textSize="12sp"/>
+
+    <ImageView
+        android:id="@+id/imageViewCurrentPayment"
+        android:layout_width="199dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:srcCompat="@drawable/current_payment" />
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="435sp"

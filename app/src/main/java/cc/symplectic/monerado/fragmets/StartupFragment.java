@@ -61,7 +61,7 @@ public class StartupFragment extends Fragment {
         ReadWriteGUID moaddyfile = new ReadWriteGUID("moaddy.pls");
         moaddyfile.writeToFile(MainActivity.MOADDY, view.getContext());
 
-        Fragment fragment = new MenuFragment(MainActivity.MainMenu);
+        Fragment fragment = new MenuFragment();
         RunFragment(fragment);
         dialog.dismiss();
 

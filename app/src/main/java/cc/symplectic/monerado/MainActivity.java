@@ -2,19 +2,22 @@ package cc.symplectic.monerado;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.common.util.concurrent.ListenableFuture;
 
-import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -24,41 +27,39 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.work.BackoffPolicy;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.ExistingWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
-import androidx.work.Operation;
 import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkContinuation;
-import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
-import androidx.work.WorkQuery;
-import androidx.work.WorkRequest;
-
-import org.jetbrains.annotations.NotNull;
 
 import cc.symplectic.monerado.databinding.ActivityMainBinding;
+import cc.symplectic.monerado.fragmets.BlockPaymentFragment;
+import cc.symplectic.monerado.fragmets.BlocksFragment;
 import cc.symplectic.monerado.fragmets.MenuFragment;
-import cc.symplectic.monerado.fragmets.PoolListFragment;
 import cc.symplectic.monerado.fragmets.StartupFragment;
 
 import java.util.ArrayList;
 
 import java.io.File;
-import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import cc.symplectic.monerado.workers.BlockPaymentsWorker;
+import cc.symplectic.monerado.workers.MinerIdentifiersWorker;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
-    public static ArrayList<String> MainMenu = new ArrayList<>();
+    //public static ArrayList<String> MainMenu = new ArrayList<>();
     public static String MOADDY;
-    private final static String WORKER_STATUS = "WORKER_STATUS";
-    private final static String WORKER_NAME = "WORKER_IDS_WORKER";
+    private final String ID_WORKER_TAG = "IDWORKER1";
+    private final String BLOCK_WORKER_TAG = "BLOCKWORKER1";
+    private final String IDWORKERNAME = "ID_WORKER";
+    private final String BLOCKWORKERNAME = "BLOCK_WORKER";
     public final static String NOTIFICATION_NAME = "workerStatus";
+    public WorkManager minerWorker;
+    public WorkManager blockWorker;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,14 +94,60 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         // Begin the transaction
+        ReadWriteGUID mBatteryFile = new ReadWriteGUID("batteryoptimization");
+        File batfile = new File(getApplicationContext().getFilesDir().getPath() + "/batteryoptimization");
+        int mBatOption;
+        if (batfile.exists()) {
+             mBatOption = Integer.parseInt(mBatteryFile.readFromFile(getApplicationContext()));
+        }
+        else {
+            mBatteryFile.writeToFile("0", getApplicationContext());
+            mBatOption = 0;
+        }
 
-        createNotificationChannel();
-        createWorker();
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            if (!pm.isIgnoringBatteryOptimizations(getPackageName()) && mBatOption != 2)
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        MainMenu.add("General & Payment Info");
-        MainMenu.add("Worker Stats");
-        MainMenu.add("Block Payments");
-        MainMenu.add("Remrig");
+                builder.setTitle("Battery Optimization");
+                builder.setMessage("This app has background services to monitor block payments and miner workers. Please turn off battery optimization for Monerado to function as intended");
+                builder.setPositiveButton("Let's Do it!", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                        startActivity(intent);
+                    }
+                });
+                builder.setNeutralButton("No. Don't ask again.", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mBatteryFile.writeToFile("2", getApplicationContext());
+                        dialog.cancel();
+                        dialog.cancel();
+                    }
+                });
+                builder.setNegativeButton("Pass", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+
+                //  Prompt the user to disable battery optimization
+            }
+        }
+
+
+
+        // battery optimization white-listing
+
+        //MainMenu.add("General & Payment Info");
+        //MainMenu.add("Worker Stats");
+        //MainMenu.add("Block Payments");
+        //MainMenu.add("Remrig");
         //MainMenu.add("Genral Pool Info");
         //MainMenu.add("Genral Pool Stats");
 
@@ -149,9 +196,13 @@ public class MainActivity extends AppCompatActivity {
             RunFragment(fragment);
         }
         else {
-            Fragment fragment = new MenuFragment(MainMenu);
+            Fragment fragment = new MenuFragment();
             RunFragment(fragment);
         }
+
+        createNotificationChannel();
+        createWorkers();
+
 
     }
 
@@ -202,25 +253,50 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void createWorker() {
+    private void createWorkers() {
 
-
+/*
         Constraints constraints = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-
+*/
         PeriodicWorkRequest MinerIDs =
                 new PeriodicWorkRequest.Builder(MinerIdentifiersWorker.class, 15, TimeUnit.MINUTES)
-                        .setConstraints(constraints)
+                        //.setConstraints(constraints)
                         .setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
-                        .addTag(WORKER_STATUS)
+                        .addTag(ID_WORKER_TAG)
                         .build();
+        minerWorker = WorkManager.getInstance(getApplication());
+        minerWorker.enqueueUniquePeriodicWork(IDWORKERNAME, ExistingPeriodicWorkPolicy.REPLACE, MinerIDs);
+        //WorkManager.getInstance(this).enqueueUniquePeriodicWork(WORKER_NAME, ExistingPeriodicWorkPolicy.KEEP, MinerIDs);
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(WORKER_NAME, ExistingPeriodicWorkPolicy.KEEP, MinerIDs);
+        PeriodicWorkRequest BlockPayments =
+                new PeriodicWorkRequest.Builder(BlockPaymentsWorker.class, 1, TimeUnit.HOURS)
+                        //.setConstraints(constraints)
 
+                        .setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+                        .addTag(BLOCK_WORKER_TAG)
+                        .build();
+        blockWorker = WorkManager.getInstance(getApplication());
+        blockWorker.enqueueUniquePeriodicWork(BLOCKWORKERNAME, ExistingPeriodicWorkPolicy.REPLACE, BlockPayments);
+    }
+/*
+    @Override
+    public void onBackPressed() {
+
+
+
+        Fragment frg =null;
+        frg = getSupportFragmentManager().findFragmentByTag("BLOCK_PAYMENTS");
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.detach(frg);
+        ft.attach(frg);
+        ft.commit();
+
+        BlockPaymentFragment.fragmentran = false;
+        super.onBackPressed();
 
     }
-
-    // Will be useful in future releases
+    */
 
 }

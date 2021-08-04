@@ -222,30 +222,78 @@
         android:gravity="top"
         tools:ignore="MissingConstraints"
         app:layout_constraintTop_toBottomOf="@+id/llinvalidshares"
-        android:weightSum="2.2"
+        android:weightSum="4.3"
         android:background="#A3222121">
+        <TextView
+            android:id="@+id/TextViewCoin"
+            android:layout_width="0dp"
+            android:layout_weight=".6"
+            android:layout_height="wrap_content"
+            android:text="COIN:"
+            android:textAlignment="viewStart"
+            android:layout_gravity="center"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="12sp"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/tv_coin"
+            android:layout_width="0dp"
+            android:layout_weight=".8"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:text="null"
+            android:textColor="@color/monerado"
+            android:textSize="12sp"
+            />
 
         <TextView
             android:id="@+id/TextViewCPU"
             android:layout_width="0dp"
-            android:layout_weight="1.0"
+            android:layout_weight=".8"
             android:layout_height="wrap_content"
             android:text="CPU TEMP:"
             android:textAlignment="viewEnd"
             android:layout_gravity="center"
             android:textColor="@color/cardview_light_background"
-            android:textSize="14sp"
+            android:textSize="12sp"
             tools:ignore="RtlCompat" />
 
         <TextView
             android:id="@+id/tv_cputemp"
             android:layout_width="0dp"
-            android:layout_weight="1.2"
+            android:layout_weight=".7"
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:layout_gravity="center"
+            android:textColor="@color/monerado"
+            android:text="null"
+            android:textSize="12sp"
+            />
+
+        <TextView
+            android:id="@+id/TextViewMEM"
+            android:layout_width="0dp"
+            android:layout_weight=".4"
+            android:layout_height="wrap_content"
+            android:text="MEM:"
+            android:textAlignment="viewEnd"
+            android:layout_gravity="center"
             android:textColor="@color/cardview_light_background"
-            android:textSize="14sp"
+            android:textSize="12sp"
+            tools:ignore="RtlCompat" />
+
+        <TextView
+            android:id="@+id/tv_mem"
+            android:layout_width="0dp"
+            android:layout_weight="1.0"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:textColor="@color/monerado"
+            android:textSize="12sp"
+            android:text="null"
             />
 
     </LinearLayout>
