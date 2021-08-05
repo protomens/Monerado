@@ -57,6 +57,8 @@ public class NotificationReceiver extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.monerado_mountain_small)
                 .setContentTitle(Title)
                 .setContentText(MessagePreface)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(Message))
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
