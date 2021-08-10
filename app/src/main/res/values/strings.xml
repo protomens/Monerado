@@ -13,4 +13,5 @@
     <string name="channel_name">Monerado</string>
     <string name="channel_description">Worker Status</string>
     <string name="CHANNEL_ID">1337</string>
+    <string name="MO_HEADER"><b>MO Quick Stats</b></string>
 </resources>

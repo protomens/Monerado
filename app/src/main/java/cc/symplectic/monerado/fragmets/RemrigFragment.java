@@ -83,11 +83,13 @@ public class RemrigFragment extends Fragment {
                     et_worker = v.findViewById(R.id.et_password);
                     et_worker.setText(Moneradoremrig.get(workersList.getItemAtPosition(position).toString()).getPassword());
                     Boolean actionValue = Moneradoremrig.get(workersList.getItemAtPosition(position).toString()).getState();
+                    Remrig = actionValue;
                     if (actionValue) {
                         remrigActionButton.setImageResource(R.drawable.stop);
                     }
                     else {
                         remrigActionButton.setImageResource(R.drawable.start);
+
                     }
                 }
                 catch (JSONException | NullPointerException e) {

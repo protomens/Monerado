@@ -3,6 +3,7 @@ package cc.symplectic.monerado.fragmets;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +11,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -28,11 +31,13 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 
 import cc.symplectic.monerado.MainActivity;
 import cc.symplectic.monerado.R;
@@ -44,6 +49,10 @@ public class MenuFragment extends Fragment {
     String WorkerURL = "https://api.moneroocean.stream/miner/" + MainActivity.MOADDY + "/stats/allWorkers";
     String PaymentURL = "https://api.moneroocean.stream/miner/" + MainActivity.MOADDY + "/stats";
     String BlockPayURL = "https://api.moneroocean.stream/miner/"+ MainActivity.MOADDY + "/block_payments?limit=100";
+    String PoolStatsURL = "https://api.moneroocean.stream/pool/stats";
+    HashMap<String, String> PaymentInfo = new HashMap<>();
+    HashMap<String, String> PoolStatsInfo = new HashMap<>();
+    View MenuView;
     private static BigDecimal TotalBlockPayment = new BigDecimal(0.0);
 
     public MenuFragment() {
@@ -57,8 +66,12 @@ public class MenuFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-
+        MenuView = view;
         setMenuIconsOnClickListener(view);
+        onBackKeyPressed(view);
+        GetInfos(PaymentURL, 420);
+
+
     }
 
     private void setMenuIconsOnClickListener(View v) {
@@ -67,6 +80,7 @@ public class MenuFragment extends Fragment {
         ImageView BlockPayments = v.findViewById(R.id.imageView8);
         ImageView Remrig = v.findViewById(R.id.imageView10);
         ImageView WarriorV = v.findViewById(R.id.imageView7);
+        FloatingActionButton refreshButton = v.findViewById(R.id.floatingRefreshButton);
 
         Payments.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,6 +124,14 @@ public class MenuFragment extends Fragment {
             }
         });
 
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GetInfos(PaymentURL, 420);
+
+            }
+        });
+
     }
 
     private void GetInfos(String url, int position) {
@@ -142,7 +164,7 @@ public class MenuFragment extends Fragment {
         rQueue.add(request);
     }
 
-    void parseJsonData(String jsonString, int position) throws JSONException {
+    private void parseJsonData(String jsonString, int position) throws JSONException {
         JSONObject object = null;
         WorkerNameObj WNObj = new WorkerNameObj();
         JSONArray jsonArray;
@@ -207,9 +229,87 @@ public class MenuFragment extends Fragment {
                 Fragment fragment3 = new RemrigFragment(WNObj.al);
                 RunMenuFragment(fragment3, "REMRIG");
                 break;
+            case 314:
+                try {
+                    PoolStatsInfo = parsePoolStats(object);
+                    SetQuickStats(position);
+                }
+                catch (JSONException e) {e.printStackTrace();}
+                break;
+            case 420:
+                try {
+                    PaymentInfo = parsePaymentInfos(object);
+                    SetQuickStats(position);
+                    dialog.dismiss();
+                    GetInfos(PoolStatsURL, 314);
+                    dialog.dismiss();
+                }
+                catch (JSONException e) { e.printStackTrace();}
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + position);
+
         }
+    }
+
+    private void SetQuickStats(Integer position) {
+        switch(position) {
+            case 314:
+                TextView textView = MenuView.findViewById(R.id.tv_noOfMiner);
+                textView.setText(PoolStatsInfo.get("miners"));
+                textView = MenuView.findViewById(R.id.tv_xmrprice);
+                textView.setText(PoolStatsInfo.get("price"));
+                break;
+            case 420:
+                Double Hash2;
+                DecimalFormat df = new DecimalFormat("###,###.000");
+                TextView tv = MenuView.findViewById(R.id.tv_myhashrate);
+
+                String Hash = PaymentInfo.get("RawHash");
+
+                if (Double.parseDouble(Hash) > 1000) {
+                    Hash2 = Double.parseDouble(Hash) / (double) 1000;
+                } else {
+                    Hash2 = Double.valueOf(Hash);
+                }
+
+                String myHash = df.format(Hash2);
+
+                Hash = PaymentInfo.get("PayHash");
+                if (Double.parseDouble(Hash) > 1000) {
+                    Hash2 = Double.parseDouble(Hash) / (double) 1000;
+                } else {
+                    Hash2 = Double.valueOf(Hash);
+                }
+
+                myHash = myHash + " / " + df.format(Hash2) + " Kh/s";
+                tv.setText(myHash);
+
+                BigDecimal XMR = new BigDecimal(PaymentInfo.get("AmtPaid"));
+                XMR = XMR.divide(PaymentFragment.Satoshi);
+                tv = MenuView.findViewById(R.id.tv_totalxmr);
+                tv.setText(String.valueOf(XMR));
+                tv = MenuView.findViewById(R.id.tv_pendingxmr);
+                XMR = new BigDecimal(PaymentInfo.get("AmtDue"));
+                XMR = XMR.divide(PaymentFragment.Satoshi);
+                tv.setText(String.valueOf(XMR));
+                break;
+
+        }
+
+    }
+
+    private HashMap<String,String> parsePoolStats(JSONObject object) throws JSONException {
+        HashMap<String,String> PoolStatsMap = new HashMap<>();
+        DecimalFormat df = new DecimalFormat("###,###.###");
+
+        JSONObject pool_stats = object.getJSONObject("pool_statistics");
+        PoolStatsMap.put("miners", pool_stats.getString("miners"));
+        pool_stats = pool_stats.getJSONObject("price");
+        PoolStatsMap.put("price", df.format(Double.parseDouble(pool_stats.getString("usd"))));
+
+        return PoolStatsMap;
+
     }
 
     public static ArrayList<HashMap<String, String>>  parseBlockPayments(String jsonString, Boolean NewData) throws JSONException {
@@ -287,5 +387,25 @@ public class MenuFragment extends Fragment {
         }
         catch (NullPointerException e) { Log.w("Menu", "Did not fetch data... no dialog"); }
 
+    }
+
+    private void onBackKeyPressed(View view) {
+        //You need to add the following line for this solution to work; thanks skayred
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
+        view.setOnKeyListener( new View.OnKeyListener()
+        {
+            @Override
+            public boolean onKey( View v, int keyCode, KeyEvent event )
+            {
+                if( keyCode == KeyEvent.KEYCODE_BACK )
+                {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        } );
     }
 }
