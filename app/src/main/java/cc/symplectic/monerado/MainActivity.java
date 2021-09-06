@@ -94,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         // Begin the transaction
+
+        /*
         ReadWriteGUID mBatteryFile = new ReadWriteGUID("batteryoptimization");
         File batfile = new File(getApplicationContext().getFilesDir().getPath() + "/batteryoptimization");
         int mBatOption;
@@ -142,6 +144,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+         */
         // battery optimization white-listing
 
         //MainMenu.add("General & Payment Info");
@@ -158,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
         File file = new File(getApplicationContext().getFilesDir().getPath() + "/remrigs.json");
         File idfile = new File(getApplicationContext().getFilesDir().getPath() + "/identifiers.mo");
+        File payfile = new File(getApplicationContext().getFilesDir().getPath() + "/avgpayhash.json");
         if (file.exists()) {
             Log.d("MA", "remrigs.json EXISTS!");
             //ReadWriteGUID workerRemrigs = new ReadWriteGUID("remrigs.json");
@@ -178,6 +183,16 @@ public class MainActivity extends AppCompatActivity {
             ReadWriteGUID identifiersFile = new ReadWriteGUID("identifiers.mo");
             identifiersFile.writeToFile("[]", getApplicationContext());
         }
+
+        if(payfile.exists()) {
+            Log.d("MA", "avgpayhash.json exists!");
+        }
+        else {
+            Log.d("MA", "avgpayhash.json does not exist! creating...");
+            ReadWriteGUID avgPayHash = new ReadWriteGUID("avgpayhash.json");
+            avgPayHash.writeToFile("[]", getApplicationContext());
+        }
+
 
         // No need to read the file here.
         // Could be useful in a Global Variable environment.

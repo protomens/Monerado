@@ -23,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -252,7 +253,7 @@ public class MenuFragment extends Fragment {
         }
     }
 
-    private void SetQuickStats(Integer position) {
+    private void SetQuickStats(Integer position) throws JSONException {
         switch(position) {
             case 314:
                 TextView textView = MenuView.findViewById(R.id.tv_noOfMiner);
@@ -276,6 +277,7 @@ public class MenuFragment extends Fragment {
                 String myHash = df.format(Hash2);
 
                 Hash = PaymentInfo.get("PayHash");
+                ComputeDailyMiningRevenue(Double.parseDouble(Hash));
                 if (Double.parseDouble(Hash) > 1000) {
                     Hash2 = Double.parseDouble(Hash) / (double) 1000;
                 } else {
@@ -296,6 +298,96 @@ public class MenuFragment extends Fragment {
                 break;
 
         }
+
+    }
+
+    private void ComputeDailyMiningRevenue(Double payHash) throws JSONException {
+        HashMap<String, Double> JSONPayHash = new HashMap<>();
+        ArrayList<HashMap<String, Double>> JSONPayArray = new ArrayList<HashMap<String, Double>>();
+        Double AvgPayHashRate = 0.0;
+
+        ReadWriteGUID payFile = new ReadWriteGUID("avgpayhash.json");
+        String avgPayHashJSON = payFile.readFromFile(getContext());
+        Log.d("MF", "Pay Hash JSON: " + avgPayHashJSON);
+        JSONArray jsonArray = new JSONArray(avgPayHashJSON);
+        Double payhash;
+        int k;
+        Integer payRateArrayLen = jsonArray.length();
+        Log.d("MF", "Json Length: " + payRateArrayLen);
+        if (payRateArrayLen >= 50) {
+            for (k = payRateArrayLen - 50; k < jsonArray.length(); k++) {
+                JSONObject object = jsonArray.getJSONObject(k);
+                payhash = Double.parseDouble(object.getString("hashate"));
+                JSONPayHash.put("hashrate", payhash);
+                JSONPayArray.add(JSONPayHash);
+                AvgPayHashRate += payhash;
+
+            }
+        }
+        else {
+            for (k = 0; k < jsonArray.length(); k++) {
+                JSONObject object = jsonArray.getJSONObject(k);
+                payhash = Double.parseDouble(object.getString("hashrate"));
+                JSONPayHash.put("hashrate", payhash);
+                JSONPayArray.add(JSONPayHash);
+                AvgPayHashRate += payhash;
+            }
+        }
+
+        JSONPayHash.put("hashrate", payHash);
+        JSONPayArray.add(JSONPayHash);
+
+        AvgPayHashRate += payHash;
+        AvgPayHashRate = AvgPayHashRate / (k + 1);
+
+        Integer intAvgHashRate = (int) Math.round(AvgPayHashRate);
+
+        Log.d("MF", "Average Hash Rate: " + intAvgHashRate);
+
+
+        // Get CoinCalculators XMR Daily pay rate, parse JSON, and set TextView
+        GetMiningRevenue(intAvgHashRate);
+
+        // Write newest payrate
+        Gson gson = new Gson();
+        String avgpaystring = gson.toJson(JSONPayArray);
+        payFile.writeToFile(avgpaystring, getContext());
+
+    }
+
+    private void GetMiningRevenue(Integer HashRate) {
+        String url = "https://www.coincalculators.io/api?hashrate=" + String.valueOf(HashRate) + "&name=Monero";
+
+        StringRequest request = new StringRequest(url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String string) {
+                try {
+                    String DailyPayRate = "$" + parseMiningRevenueJson(string);
+                    Log.d("MF", "Daily XMR Payout: " + DailyPayRate);
+                    TextView tv_dpr = MenuView.findViewById(R.id.tv_dailyxmrpayout);
+                    tv_dpr.setText(DailyPayRate);
+                }
+                catch (JSONException e) { e.printStackTrace(); }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Log.d("GMR", "ERROR IN GETTING XMR MINING INFOS");
+                Toast.makeText(getContext(), "Some error occurred!!", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+
+        RequestQueue rQueue = Volley.newRequestQueue(getContext());
+        rQueue.add(request);
+    }
+
+    private String parseMiningRevenueJson(String jsonString) throws JSONException {
+        JSONObject object = new JSONObject(jsonString);
+        Double DailyPayRate = Double.parseDouble(object.getString("revenueInDayUSD"));
+        Log.d("MFparse", "Daily Pay Rate: " + DailyPayRate);
+        DecimalFormat df = new DecimalFormat("###.00");
+        return String.valueOf(df.format(DailyPayRate));
 
     }
 

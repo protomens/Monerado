@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/llqstats"
         android:layout_width="300sp"
-        android:layout_height="120sp"
+        android:layout_height="140sp"
         android:background="@drawable/llmmbgshadow"
         android:gravity="left"
         android:orientation="vertical"
@@ -175,6 +175,36 @@
                 />
             <TextView
                 android:id="@+id/tv_pendingxmr"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="null"
+                android:layout_weight="1"
+                android:textAlignment="textStart"
+                android:textColor="@color/white"
+                android:textSize="10dp"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/llstats6"
+            android:layout_width="300sp"
+            android:layout_height="15sp"
+            android:orientation="horizontal"
+            android:elevation="20sp"
+            android:weightSum="2.2">
+            <TextView
+                android:id="@+id/textViewDailyXMRPayout"
+                android:layout_width="0dp"
+                android:layout_marginStart="10dp"
+
+                android:layout_height="wrap_content"
+                android:text="XMR Revenue (1 day):"
+                android:layout_weight="1"
+                android:textAlignment="textStart"
+                android:textColor="@color/white"
+                android:textSize="10dp"
+                />
+            <TextView
+                android:id="@+id/tv_dailyxmrpayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="null"
