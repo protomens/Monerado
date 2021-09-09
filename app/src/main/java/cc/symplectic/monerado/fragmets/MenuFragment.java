@@ -47,10 +47,10 @@ import cc.symplectic.monerado.WorkerNameObj;
 
 public class MenuFragment extends Fragment {
     ProgressDialog dialog;
-    String WorkerURL = "https://api.moneroocean.stream/miner/" + MainActivity.MOADDY + "/stats/allWorkers";
-    String PaymentURL = "https://api.moneroocean.stream/miner/" + MainActivity.MOADDY + "/stats";
-    String BlockPayURL = "https://api.moneroocean.stream/miner/"+ MainActivity.MOADDY + "/block_payments?limit=100";
-    String PoolStatsURL = "https://api.moneroocean.stream/pool/stats";
+    String WorkerURL = MainActivity.APIHOST + "miner/" + MainActivity.MOADDY + "/stats/allWorkers";
+    String PaymentURL = MainActivity.APIHOST + "miner/" + MainActivity.MOADDY + "/stats";
+    String BlockPayURL = MainActivity.APIHOST + "miner/"+ MainActivity.MOADDY + "/block_payments?limit=100";
+    String PoolStatsURL = MainActivity.APIHOST + "pool/stats";
     HashMap<String, String> PaymentInfo = new HashMap<>();
     HashMap<String, String> PoolStatsInfo = new HashMap<>();
     View MenuView;
@@ -302,7 +302,6 @@ public class MenuFragment extends Fragment {
     }
 
     private void ComputeDailyMiningRevenue(Double payHash) throws JSONException {
-        HashMap<String, Double> JSONPayHash = new HashMap<>();
         ArrayList<HashMap<String, Double>> JSONPayArray = new ArrayList<HashMap<String, Double>>();
         Double AvgPayHashRate = 0.0;
 
@@ -316,24 +315,28 @@ public class MenuFragment extends Fragment {
         Log.d("MF", "Json Length: " + payRateArrayLen);
         if (payRateArrayLen >= 50) {
             for (k = payRateArrayLen - 50; k < jsonArray.length(); k++) {
+                HashMap<String, Double> JSONPayHash = new HashMap<>();
                 JSONObject object = jsonArray.getJSONObject(k);
-                payhash = Double.parseDouble(object.getString("hashate"));
+                payhash = Double.parseDouble(object.getString("hashrate"));
                 JSONPayHash.put("hashrate", payhash);
                 JSONPayArray.add(JSONPayHash);
+                JSONPayHash = null;
                 AvgPayHashRate += payhash;
 
             }
         }
         else {
             for (k = 0; k < jsonArray.length(); k++) {
+                HashMap<String, Double> JSONPayHash = new HashMap<>();
                 JSONObject object = jsonArray.getJSONObject(k);
                 payhash = Double.parseDouble(object.getString("hashrate"));
                 JSONPayHash.put("hashrate", payhash);
                 JSONPayArray.add(JSONPayHash);
+                JSONPayHash = null;
                 AvgPayHashRate += payhash;
             }
         }
-
+        HashMap<String, Double> JSONPayHash = new HashMap<>();
         JSONPayHash.put("hashrate", payHash);
         JSONPayArray.add(JSONPayHash);
 
@@ -373,7 +376,7 @@ public class MenuFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 Log.d("GMR", "ERROR IN GETTING XMR MINING INFOS");
-                Toast.makeText(getContext(), "Some error occurred!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Could not get XMR Revenue from CoinCalculators!", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         });

@@ -20,6 +20,10 @@ import java.io.InputStreamReader;
 
 import cc.symplectic.monerado.R;
 
+// NOT IN USE. MAY ADD MINING CAPABILITIES IN LATER VERSIONS
+// THIS IS HERE AS WE STARTED, BUT HAVE OTHER PRIORITIES
+// THIS CODE WILL NOT MINE ON YOUR PHONE
+
 public class WarriorVMinerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {

@@ -39,7 +39,7 @@ import cc.symplectic.monerado.adapters.ListWorkersAdapter;
 public class WorkerFragment extends Fragment {
     ArrayList al;
     ArrayList<JSONObject> workerObjects;
-    String ChartURL = "https://api.moneroocean.stream/miner/" + MainActivity.MOADDY + "/chart/hashrate/allWorkers";
+    String ChartURL = MainActivity.APIHOST + "miner/" + MainActivity.MOADDY + "/chart/hashrate/allWorkers";
     HashMap<String, ArrayList<Double>> WorkerHashChart = new HashMap<String, ArrayList<Double>>();
     ProgressDialog dialog;
 

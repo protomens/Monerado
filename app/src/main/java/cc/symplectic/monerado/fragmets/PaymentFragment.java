@@ -45,7 +45,7 @@ public class PaymentFragment extends Fragment {
     HashMap<String, String> PaymentInfos = new HashMap<String, String>();
     public static BigDecimal Satoshi = new BigDecimal("1000000000000");
     ProgressDialog dialog;
-    String PaymentsURL = "https://api.moneroocean.stream/miner/" + MainActivity.MOADDY + "/payments";
+    String PaymentsURL = MainActivity.APIHOST + "miner/" + MainActivity.MOADDY + "/payments";
 
     public PaymentFragment(HashMap<String, String> PaymentInfos) {
         this.PaymentInfos = PaymentInfos;

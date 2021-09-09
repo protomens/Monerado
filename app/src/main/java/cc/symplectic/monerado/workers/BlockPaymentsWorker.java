@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -36,11 +37,14 @@ import cc.symplectic.monerado.ReadWriteGUID;
 import cc.symplectic.monerado.fragmets.MenuFragment;
 import cc.symplectic.monerado.fragmets.PaymentFragment;
 import cc.symplectic.monerado.fragmets.PaymentsListFragment;
+import cc.symplectic.monerado.fragmets.StartupFragment;
 
 public class BlockPaymentsWorker extends Worker {
-    private String BlockPaymentURL = "https://api.moneroocean.stream/miner/"+ MainActivity.MOADDY + "/block_payments?limit=100";
-    private String PaymentURL = "https://api.moneroocean.stream/miner/" + MainActivity.MOADDY + "/stats";
-    private String PaymentsURL = "https://api.moneroocean.stream/miner/" + MainActivity.MOADDY + "/payments";
+    private String APIHOST = "https://api.moneroocean.stream/";
+    private String MOADDY = "x";
+    private String BlockPaymentURL = APIHOST + "miner/"+ MOADDY + "/block_payments?limit=100";
+    private String PaymentURL = APIHOST + "miner/" + MOADDY + "/stats";
+    private String PaymentsURL = APIHOST + "miner/" + MOADDY + "/payments";
     private String PaymentString;
     private ArrayList<HashMap<String, String>> blockPayments = new ArrayList<HashMap<String, String>>();
     private ArrayList<HashMap<String, String>> LastPayment = new ArrayList<>();
@@ -54,11 +58,44 @@ public class BlockPaymentsWorker extends Worker {
     @Override
     public Result doWork() {
 
-        // Do the work here--in this case, upload the images.
-        GetInfos(BlockPaymentURL, false, false);
+        // Load Pool Infos JSON FILE
+        Boolean sanity = LoadPoolJSON();
 
+        // Do the work here--in this case, upload the images.
+        if (sanity) {
+            GetInfos(BlockPaymentURL, false, false);
+        }
         // Indicate whether the work finished successfully with the Result
         return Result.success();
+    }
+
+    private Boolean LoadPoolJSON() {
+        ReadWriteGUID moaddyfile = new ReadWriteGUID("moaddy.pls");
+        String PoolInfosJSON = moaddyfile.readFromFile(getApplicationContext());
+        if (PoolInfosJSON.isEmpty()) {
+            return false;
+        } else {
+            try {
+                JSONObject poolobj = new JSONObject(PoolInfosJSON);
+                String pool = poolobj.getString("pool");
+                if (pool.equals("C3pool")) {
+                    APIHOST = "https://api.c3pool.com/";
+                }
+                MOADDY = poolobj.getString("address");
+                BlockPaymentURL = APIHOST + "miner/"+ MOADDY + "/block_payments?limit=100";
+                PaymentURL = APIHOST + "miner/" + MOADDY + "/stats";
+                PaymentsURL = APIHOST + "miner/" + MOADDY + "/payments";
+
+            }
+            catch (JSONException e) {
+                Log.w("BPW", "ERROR ON JSON");
+                MOADDY = PoolInfosJSON;
+                BlockPaymentURL = APIHOST + "miner/"+ MOADDY + "/block_payments?limit=100";
+                PaymentURL = APIHOST + "miner/" + MOADDY + "/stats";
+                PaymentsURL = APIHOST + "miner/" + MOADDY + "/payments";
+            }
+        }
+        return true;
     }
 
     private void GetInfos(String URL, Boolean PaymentInfo, Boolean Payments) {

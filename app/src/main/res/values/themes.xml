@@ -22,4 +22,16 @@
     <style name="Theme.Monerado.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Monerado.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="mySpinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
+        <item name="android:textColor">@color/monerado</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.Monerado.NoActionBar">
+        <item name ="android:colorPrimary">@color/monpurple</item>
+        <item name ="android:colorPrimaryDark">@color/monerado</item>
+        <item name="android:statusBarColor">@color/monpurple</item>
+        <item name="android:itemBackground">@color/monerado</item>
+        <item name="android:textColor">@color/monpurple</item>
+    </style>
 </resources>

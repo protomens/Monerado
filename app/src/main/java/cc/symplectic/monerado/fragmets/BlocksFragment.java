@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -57,19 +58,24 @@ public class BlocksFragment extends Fragment {
         onBackKeyPressed(view);
 
         // Necessary conversions for OLDLY stored data
-        for (HashMap<String, String> element : BlockPayments) {
-            try {
-                d = new Date((long) (Long.parseLong(element.get("ts")) * 1000));
-                element.put("ts", DateFor.format(d));
-                d = new Date((long) (Long.parseLong(element.get("ts_found")) * 1000));
-                element.put("ts_found", DateFor.format(d));
-                element.put("value_percent", element.get("value_percent").replace("%", "") + "%");
-                element.put("value", element.get("value").replace(" XMR", "") + " XMR");
+        try {
+            for (HashMap<String, String> element : BlockPayments) {
+                try {
+                    d = new Date((long) (Long.parseLong(element.get("ts")) * 1000));
+                    element.put("ts", DateFor.format(d));
+                    d = new Date((long) (Long.parseLong(element.get("ts_found")) * 1000));
+                    element.put("ts_found", DateFor.format(d));
+                    element.put("value_percent", element.get("value_percent").replace("%", "") + "%");
+                    element.put("value", element.get("value").replace(" XMR", "") + " XMR");
+                } catch (Exception e) {
+                    Log.w(TAG, "Exception Error: " + e.getMessage());
+                }
+                ConvertedBlockPayments.add(element);
             }
-            catch (Exception e) {
-                Log.w(TAG, "Exception Error: " + e.getMessage());
-            }
-            ConvertedBlockPayments.add(element);
+        }
+        catch (NullPointerException e) {
+            Toast.makeText(view.getContext(), "SOME ERROR OCCURED", Toast.LENGTH_SHORT).show();
+            Log.w("BF", "NO BLOCK FRAGMENTS FOUND");
         }
 
         ListView paymentsList = view.findViewById(R.id.paymentsList);
@@ -81,15 +87,20 @@ public class BlocksFragment extends Fragment {
                 new int[] { R.id.tv_Date, R.id.tv_datefound, R.id.tv_pct, R.id.tv_xmr});
         paymentsList.setAdapter(adapter);
 
-        for (HashMap<String, String> block : BlockPayments) {
-            String value = block.get("value");
-            value = value.replace(" XMR", "");
-            BigDecimal TrueValue = new BigDecimal(value);
-            //Log.d(TAG, "Value: " + String.valueOf(TrueValue));
-            TotalAmtFromBlocks = TotalAmtFromBlocks.add(TrueValue);
-            //Log.d(TAG, "Total Amt: " + String.valueOf(TotalAmtFromBlocks));
+        try {
+            for (HashMap<String, String> block : BlockPayments) {
+                String value = block.get("value");
+                value = value.replace(" XMR", "");
+                BigDecimal TrueValue = new BigDecimal(value);
+                //Log.d(TAG, "Value: " + String.valueOf(TrueValue));
+                TotalAmtFromBlocks = TotalAmtFromBlocks.add(TrueValue);
+                //Log.d(TAG, "Total Amt: " + String.valueOf(TotalAmtFromBlocks));
+            }
         }
-
+        catch (NullPointerException e) {
+            Toast.makeText(view.getContext(), "SOME ERROR OCCURED", Toast.LENGTH_SHORT).show();
+            Log.w("BF", "NO BLOCK FRAGMENTS FOUND");
+        }
         TotalAmtFromBlocks = TotalAmtFromBlocks.round(mc);
         blockMessage = view.findViewById(R.id.tv_totalpaid);
         blockMessage.setText(String.valueOf(TotalAmtFromBlocks) + " XMR");

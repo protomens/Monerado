@@ -13,11 +13,17 @@
             android:icon="@drawable/mobw"
             android:title="MoneroOcean" />
 
-<!---
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_slideshow" />
-            -->
+            android:id="@+id/nav_c3"
+            android:icon="@drawable/c3pool"
+            android:title="C3Pool" />
+
+
+        <!---
+                <item
+                    android:id="@+id/nav_slideshow"
+                    android:icon="@drawable/ic_menu_slideshow"
+                    android:title="@string/menu_slideshow" />
+                    -->
     </group>
 </menu>

@@ -25,6 +25,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,8 +37,9 @@ import cc.symplectic.monerado.ReadWriteGUID;
 import cc.symplectic.monerado.receivers.NotificationReceiver;
 
 public class MinerIdentifiersWorker extends Worker {
-    private String IdentifiersURL = "https://api.moneroocean.stream/miner/" + MainActivity.MOADDY  + "/identifiers";
-
+    private String APIHOST = "https://api.moneroocean.stream/";
+    private String MOADDY = "x";
+    private String IdentifiersURL = APIHOST + "miner/" + MOADDY  + "/identifiers";
 
     public MinerIdentifiersWorker(@NonNull Context context, @NonNull WorkerParameters params) {
         super(context, params);
@@ -45,11 +47,40 @@ public class MinerIdentifiersWorker extends Worker {
     @Override
     public Result doWork() {
 
+        Boolean sanity = LoadPoolJSON();
+
         // Do the work here--in this case, upload the images.
-        GetIdentifiers(IdentifiersURL);
+        if(sanity) {
+            GetIdentifiers(IdentifiersURL);
+        }
 
         // Indicate whether the work finished successfully with the Result
         return Result.success();
+    }
+
+    private Boolean LoadPoolJSON() {
+        ReadWriteGUID moaddyfile = new ReadWriteGUID("moaddy.pls");
+        String PoolInfosJSON = moaddyfile.readFromFile(getApplicationContext());
+        if (PoolInfosJSON.isEmpty()) {
+            return false;
+        } else {
+            try {
+                JSONObject poolobj = new JSONObject(PoolInfosJSON);
+                String pool = poolobj.getString("pool");
+                if (pool.equals("C3pool")) {
+                    APIHOST = "https://api.c3pool.com/";
+                }
+                MOADDY = poolobj.getString("address");
+                IdentifiersURL = APIHOST + "miner/" + MOADDY  + "/identifiers";
+
+            }
+            catch (JSONException e) {
+                Log.w("BPW", "ERROR ON JSON");
+                MOADDY = PoolInfosJSON;
+                IdentifiersURL = APIHOST + "miner/" + MOADDY  + "/identifiers";
+            }
+        }
+        return true;
     }
 
     private void GetIdentifiers(String url) {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="miningpools">
+        <item>MoneroOcean</item>
+        <item>C3pool</item>
+    </string-array>
+</resources>

@@ -144,16 +144,15 @@ public class WorkerStatsFragment extends  Fragment {
         area3d.animation(true);
 
 
-        //area3d.yAxis(0).title("Shooting %");
-        area3d.xAxis(0).ticks(false);
-        area3d.xAxis(false);
-        //area3d.xAxis(0).labels().padding(5d, 5d, 0d, 5d);
+
+        area3d.xAxis(0).ticks(true);
+        area3d.xAxis(0).minorTicks(false);
+        area3d.xAxis(0).title("Time Elapsed (m)");
+        area3d.xAxis(true);
         area3d.xGrid(false);
         area3d.title("Pay Hash Rate of:  " + Worker + " (20hrs)");
-        area3d.title().fontColor("#FFFFFF");
+        area3d.title().fontColor("#FFB908");
 
-        //area3d.title().useHtml(true);
-        //area3d.title().padding(0d, 0d, 20d, 0d);
 
 
         try {
@@ -165,12 +164,13 @@ public class WorkerStatsFragment extends  Fragment {
         }
 
         Line marker = area3d.lineMarker(0).value(avgHR);
-        marker.stroke("white", 1.3, "2 12","bevel", "round");
+        marker.stroke("#FFFFFF", 1.5, "2 12","bevel", "round");
         Text marker2 = area3d.textMarker(0).value(avgHR);
 
-        DecimalFormat df = new DecimalFormat("###,###.##");
+        DecimalFormat df = new DecimalFormat("###,###.00");
         marker2.text(String.valueOf(df.format(avgHR)));
         marker2.fontColor("#FFFFFF");
+
 
         Set set = Set.instantiate();
         set.data(seriesData);
@@ -181,16 +181,17 @@ public class WorkerStatsFragment extends  Fragment {
 
         //Log.d("S1", "Series 2: " + series1.getPoint(5));
 
-        series1.normal().fill("#01a393", 0.1);
-        series1.hovered().fill("#01a393", 0.1);
-        series1.selected().fill("#01a393", 0.5);
+        series1.normal().fill("#FFB908", 0.3);
+        series1.hovered().fill("#FFB908", 0.1);
+        series1.selected().fill("#FFB908", 0.5);
 
         series1.hovered().markers(true);
         series1.normal().markers(true);
-        series1.color("#01a393");
+        series1.color("#FFB908");
         series1.markers(false);
         series1.minLabels(true);
         series1.maxLabels(true);
+        series1.name("H/s");
 
         area3d.tooltip()
                 .displayMode("Union")
@@ -202,7 +203,7 @@ public class WorkerStatsFragment extends  Fragment {
 
         area3d.interactivity().hoverMode(HoverMode.BY_X);
         area3d.legend(false);
-        area3d.background().fill("#2F3335");
+        area3d.background().fill("#1b0222");
         //area3d.zAspect(10);
 
         anyChartView.setChart(area3d);

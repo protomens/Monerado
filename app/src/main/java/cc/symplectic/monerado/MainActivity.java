@@ -12,10 +12,14 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
@@ -32,6 +36,10 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import cc.symplectic.monerado.databinding.ActivityMainBinding;
 import cc.symplectic.monerado.fragmets.BlockPaymentFragment;
 import cc.symplectic.monerado.fragmets.BlocksFragment;
@@ -46,11 +54,10 @@ import java.util.concurrent.TimeUnit;
 import cc.symplectic.monerado.workers.BlockPaymentsWorker;
 import cc.symplectic.monerado.workers.MinerIdentifiersWorker;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
-    //public static ArrayList<String> MainMenu = new ArrayList<>();
     public static String MOADDY;
     private final String ID_WORKER_TAG = "IDWORKER1";
     private final String BLOCK_WORKER_TAG = "BLOCKWORKER1";
@@ -59,43 +66,38 @@ public class MainActivity extends AppCompatActivity {
     public final static String NOTIFICATION_NAME = "workerStatus";
     public WorkManager minerWorker;
     public WorkManager blockWorker;
+    public static String APIHOST = "https://api.moneroocean.stream/";
 
+    public enum POOL { MO, C3};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //String remrigs;
 
+        // Nav drawer setup
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
 
-        /*
-        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addPool(view);
-                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                //        .setAction("Action", null).show();
-            }
-        });
-*/
 
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_mo, R.id.nav_slideshow)
+                R.id.nav_home, R.id.nav_mo, R.id.nav_c3)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-        // Begin the transaction
+        setNavigationViewListener();
 
+        // battery optimization white-listing
+        // GitHub release only! Google will delist us if we use this code.
         /*
+
         ReadWriteGUID mBatteryFile = new ReadWriteGUID("batteryoptimization");
         File batfile = new File(getApplicationContext().getFilesDir().getPath() + "/batteryoptimization");
         int mBatOption;
@@ -119,7 +121,9 @@ public class MainActivity extends AppCompatActivity {
                 builder.setPositiveButton("Let's Do it!", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Intent intent = new Intent();
-                        intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                        //intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                        intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                        intent.setData(Uri.parse("package:" + getPackageName()));
                         startActivity(intent);
                     }
                 });
@@ -142,24 +146,24 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
-
-
          */
-        // battery optimization white-listing
-
-        //MainMenu.add("General & Payment Info");
-        //MainMenu.add("Worker Stats");
-        //MainMenu.add("Block Payments");
-        //MainMenu.add("Remrig");
-        //MainMenu.add("Genral Pool Info");
-        //MainMenu.add("Genral Pool Stats");
 
         /* Will be needed in future releases
          ReadWriteGUID poolfiles = new ReadWriteGUID("pools.txt");
          String pools = poolfiles.readFromFile(getApplicationContext());
-         */
+        */
 
+        // Create Workers and Push Notifications
+        createNotificationChannel();
+        createWorkers();
+
+        // Check Configs and Act Accordingly
+        CheckIfOtherConfigsExist();
+        ReadConfigAndDecide(null);
+
+    }
+
+    private void CheckIfOtherConfigsExist() {
         File file = new File(getApplicationContext().getFilesDir().getPath() + "/remrigs.json");
         File idfile = new File(getApplicationContext().getFilesDir().getPath() + "/identifiers.mo");
         File payfile = new File(getApplicationContext().getFilesDir().getPath() + "/avgpayhash.json");
@@ -192,36 +196,7 @@ public class MainActivity extends AppCompatActivity {
             ReadWriteGUID avgPayHash = new ReadWriteGUID("avgpayhash.json");
             avgPayHash.writeToFile("[]", getApplicationContext());
         }
-
-
-        // No need to read the file here.
-        // Could be useful in a Global Variable environment.
-        // Global variables might contain too much data slowing everything down and making
-        // the app unstable. Best to read from remrigs.json each time it's needed.
-        // Even better would be database operations. But that's a lot of code and
-        // at this point not needed until future releases.
-        //try { parseRemrigJSONFile(remrigs); }
-        //catch (JSONException e) { e.printStackTrace();}
-
-
-        ReadWriteGUID moaddyfile = new ReadWriteGUID("moaddy.pls");
-        MOADDY = moaddyfile.readFromFile(getApplicationContext());
-        if (MOADDY.isEmpty()) {
-            Fragment fragment = new StartupFragment();
-            RunFragment(fragment);
-        }
-        else {
-            Fragment fragment = new MenuFragment();
-            RunFragment(fragment);
-        }
-
-        createNotificationChannel();
-        createWorkers();
-
-
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -295,23 +270,176 @@ public class MainActivity extends AppCompatActivity {
         blockWorker = WorkManager.getInstance(getApplication());
         blockWorker.enqueueUniquePeriodicWork(BLOCKWORKERNAME, ExistingPeriodicWorkPolicy.REPLACE, BlockPayments);
     }
-/*
-    @Override
-    public void onBackPressed() {
 
+    private void ReadConfigAndDecide(@Nullable POOL MiningPool) {
+        POOL configPool;
+        ReadWriteGUID moaddyfile = new ReadWriteGUID("moaddy.pls");
+        String PoolInfosJSON = moaddyfile.readFromFile(getApplicationContext());
 
+        if (MiningPool != null) {
+            switch (MiningPool) {
+                case MO:
+                    configPool = DeterminePool();
+                    if (configPool == POOL.C3) {
+                        ShowPoolAlert(POOL.C3);
+                    }
+                    break;
+                case C3:
+                    configPool = DeterminePool();
+                    if (configPool == POOL.MO) {
+                        ShowPoolAlert(POOL.MO);
+                    }
+                    break;
+            }
+            Fragment fragment = new MenuFragment();
+            RunFragment(fragment);
+            return;
+        }
 
-        Fragment frg =null;
-        frg = getSupportFragmentManager().findFragmentByTag("BLOCK_PAYMENTS");
-        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.detach(frg);
-        ft.attach(frg);
-        ft.commit();
+        if (PoolInfosJSON.isEmpty()) {
+            Fragment fragment = new StartupFragment();
+            RunFragment(fragment);
+        }
+        else {
+            try {
+                JSONObject poolobj = new JSONObject(PoolInfosJSON);
+                String pool = poolobj.getString("pool");
+                if (pool.equals("C3pool")) {
+                    APIHOST = "https://api.c3pool.com/";
 
-        BlockPaymentFragment.fragmentran = false;
-        super.onBackPressed();
+                }
+                MOADDY = poolobj.getString("address");
+            } catch (JSONException e) {
+                MOADDY = PoolInfosJSON;
+            }
+            Fragment fragment = new MenuFragment();
+            RunFragment(fragment);
+        }
+    }
+
+    private POOL DeterminePool() {
+        ReadWriteGUID moaddyfile = new ReadWriteGUID("moaddy.pls");
+        String PoolInfosJSON = moaddyfile.readFromFile(getApplicationContext());
+
+        try {
+            JSONObject poolobj = new JSONObject(PoolInfosJSON);
+            String pool = poolobj.getString("pool");
+            if (pool.equals("C3pool")) {
+                APIHOST = "https://api.c3pool.com/";
+                MOADDY = poolobj.getString("address");
+                return POOL.C3;
+            }
+            else {
+                MOADDY = poolobj.getString("address");
+                return POOL.MO;
+            }
+
+        } catch (JSONException e) {
+            MOADDY = PoolInfosJSON;
+            return POOL.MO;
+        }
 
     }
-    */
+
+    private void ShowPoolAlert(POOL pool) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Wrong Pool!");
+        if (pool == POOL.MO) {
+            builder.setMessage("You are currently configured for Monero Ocean and cannot view C3Pool pool stats. Pool stats for miners on both C3 and MO will be implemented in the near future.");
+        }
+        else {
+            builder.setMessage("You are currently configured for C3Pool and cannot view Monero Ocean pool stats. Pool stats for miners on both C3 and MO will be implemented in the near future.");
+        }
+        builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    // Extremely ugly code.
+    // Will be used when we allow stats for miners mining on C3 & MO simultaneously.
+    /*
+    private void GetMOAddress(String json)  {
+        String pool;
+        JSONObject obj;
+        try {
+             obj = new JSONObject(json);
+        }
+        catch (JSONException e) { Log.w("MA", "JSON READ ERROR"); MOADDY = json; return; }
+        try {
+            pool = obj.getString("pool");
+            if (! pool.equals("MoneroOcean")) {
+                try {
+                    pool = obj.getString("pool2");
+                    if (pool.equals("MoneroOcean")) { MOADDY = obj.getString("address2"); }
+                }
+                catch (JSONException e) { Log.w("MA", "ERROR READING JSON. ONLY 1 POOL"); }
+            }
+        }
+        catch (JSONException e) { Log.d("MA", "OLD POOL CONFIG FILE IN PLACE. SETTING XMR ADDRESS (MOADDY)"); MOADDY = json; }
+    }
+
+    private void GetC3Address(String json) {
+        String pool;
+        JSONObject obj;
+        try {
+            obj = new JSONObject(json);
+        }
+        catch (JSONException e) { Log.w("MA", "JSON READ ERROR"); MOADDY = json; return; }
+        try {
+            pool = obj.getString("pool");
+            if (! pool.equals("C3pool")) {
+                try {
+                    pool = obj.getString("pool2");
+                    if (pool.equals("C3pool")) { MOADDY = obj.getString("address2"); }
+
+                }
+                catch (JSONException e) { Log.w("MA", "ERROR READING JSON. ONLY 1 POOL."); }
+            }
+        }
+        catch (JSONException e) { Log.d("MA", "OLD POOL CONFIG FILE IN PLACE. SETTING XMR ADDRESS (MOADDY)"); MOADDY = json; }
+    }
+
+     */
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
+        // Handle navigation view item clicks here.
+        switch (item.getItemId()) {
+
+            case R.id.nav_mo: {
+                CloseDrawer();
+                ReadConfigAndDecide(POOL.MO);
+                break;
+            }
+            case R.id.nav_c3: {
+                CloseDrawer();
+                ReadConfigAndDecide(POOL.C3);
+                break;
+            }
+            case R.id.nav_home: {
+                CloseDrawer();
+                Fragment fragment = new MenuFragment();
+                RunFragment(fragment);
+                break;
+            }
+        }
+        return true;
+    }
+
+    private void CloseDrawer() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+
+    }
+
+    private void setNavigationViewListener() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
 
 }

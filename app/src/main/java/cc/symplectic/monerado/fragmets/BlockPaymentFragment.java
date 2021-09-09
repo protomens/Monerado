@@ -38,8 +38,9 @@ public class BlockPaymentFragment extends Fragment {
     private String TotalBlockPayment;
     public static  Boolean fragmentran = false;
 
-    private String PaymentURL = "https://api.moneroocean.stream/miner/" + MainActivity.MOADDY + "/stats";
-    private String PaymentsURL = "https://api.moneroocean.stream/miner/" + MainActivity.MOADDY + "/payments";
+    private String PaymentURL = MainActivity.APIHOST + "miner/" + MainActivity.MOADDY + "/stats";
+    private String PaymentsURL = MainActivity.APIHOST + "miner/" + MainActivity.MOADDY + "/payments";
+
     private final String BLOCKPAYMENTFILE = "bpx-";
     private final String TAG = "BPF";
 

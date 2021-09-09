@@ -7,12 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cc.symplectic.monerado.MainActivity;
 import cc.symplectic.monerado.R;
@@ -48,18 +51,26 @@ public class StartupFragment extends Fragment {
             }
         });
 
+
     }
 
     public void writeMoAddy(View view) {
         dialog = new ProgressDialog(view.getContext());
         dialog.setMessage("Loading....");
         dialog.show();
+        HashMap<String, String> PoolInfos = new HashMap<>();
 
         EditText MoAddyET = (EditText) view.findViewById(R.id.et_MOADDY);
-
+        Spinner PoolSpinner = view.findViewById(R.id.poolspinner);
+        String Pool = PoolSpinner.getSelectedItem().toString();
         MainActivity.MOADDY = MoAddyET.getEditableText().toString();
+        PoolInfos.put("pool", Pool);
+        PoolInfos.put("address", MainActivity.MOADDY);
+        if (Pool.equals("C3pool")) { MainActivity.APIHOST = "https://api.c3pool.com/"; }
+        Gson gson = new Gson();
+        String PoolInfosJSON = gson.toJson(PoolInfos);
         ReadWriteGUID moaddyfile = new ReadWriteGUID("moaddy.pls");
-        moaddyfile.writeToFile(MainActivity.MOADDY, view.getContext());
+        moaddyfile.writeToFile(PoolInfosJSON, view.getContext());
 
         Fragment fragment = new MenuFragment();
         RunFragment(fragment);
