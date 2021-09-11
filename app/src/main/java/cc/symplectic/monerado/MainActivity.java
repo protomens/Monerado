@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public WorkManager blockWorker;
     public static String APIHOST = "https://api.moneroocean.stream/";
 
-    public enum POOL { MO, C3};
+    public enum POOL { MO, C3, LIBERTY};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // battery optimization white-listing
         // GitHub release only! Google will delist us if we use this code.
-        /*
+
 
         ReadWriteGUID mBatteryFile = new ReadWriteGUID("batteryoptimization");
         File batfile = new File(getApplicationContext().getFilesDir().getPath() + "/batteryoptimization");
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
 
-         */
+
 
         /* Will be needed in future releases
          ReadWriteGUID poolfiles = new ReadWriteGUID("pools.txt");
@@ -280,14 +280,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             switch (MiningPool) {
                 case MO:
                     configPool = DeterminePool();
-                    if (configPool == POOL.C3) {
-                        ShowPoolAlert(POOL.C3);
+                    if (configPool != POOL.MO) {
+                        ShowPoolAlert(configPool);
                     }
                     break;
                 case C3:
                     configPool = DeterminePool();
-                    if (configPool == POOL.MO) {
-                        ShowPoolAlert(POOL.MO);
+                    if (configPool != POOL.C3) {
+                        ShowPoolAlert(configPool);
+                    }
+                case LIBERTY:
+                    configPool = DeterminePool();
+                    if (configPool != POOL.LIBERTY) {
+                        ShowPoolAlert(configPool);
                     }
                     break;
             }
@@ -307,6 +312,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (pool.equals("C3pool")) {
                     APIHOST = "https://api.c3pool.com/";
 
+                }
+                else if (pool.equals("LibertyPool")) {
+                    APIHOST = "https://liberty-pool.com/api/";
                 }
                 MOADDY = poolobj.getString("address");
             } catch (JSONException e) {
@@ -329,6 +337,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 MOADDY = poolobj.getString("address");
                 return POOL.C3;
             }
+            else if (pool.equals("LibertyPool")) {
+                APIHOST = "https://liberty-pool.com/api/";
+                MOADDY = poolobj.getString("address");
+                return POOL.LIBERTY;
+            }
             else {
                 MOADDY = poolobj.getString("address");
                 return POOL.MO;
@@ -346,10 +359,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         builder.setTitle("Wrong Pool!");
         if (pool == POOL.MO) {
-            builder.setMessage("You are currently configured for Monero Ocean and cannot view C3Pool pool stats. Pool stats for miners on both C3 and MO will be implemented in the near future.");
+            builder.setMessage("You are currently configured for Monero Ocean and cannot view C3/Liberty pool stats. Pool stats for miners on both C3 and MO will be implemented in the near future.");
+        }
+        else if (pool == POOL.C3) {
+            builder.setMessage("You are currently configured for C3Pool and cannot view MO/Liberty pool stats. Pool stats for miners on both C3 and MO will be implemented in the near future.");
         }
         else {
-            builder.setMessage("You are currently configured for C3Pool and cannot view Monero Ocean pool stats. Pool stats for miners on both C3 and MO will be implemented in the near future.");
+            builder.setMessage("You are currently configured for Liberty Pool and cannot view MO/C3 pool stats. Pool stats for miners on both C3 and MO will be implemented in the near future.");
         }
         builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -419,6 +435,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 CloseDrawer();
                 ReadConfigAndDecide(POOL.C3);
                 break;
+            }
+            case R.id.nav_liberty: {
+                CloseDrawer();
+                ReadConfigAndDecide(POOL.LIBERTY);
             }
             case R.id.nav_home: {
                 CloseDrawer();

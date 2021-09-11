@@ -70,6 +70,9 @@ public class MinerIdentifiersWorker extends Worker {
                 if (pool.equals("C3pool")) {
                     APIHOST = "https://api.c3pool.com/";
                 }
+                else if (pool.equals("LibertyPool")) {
+                    APIHOST = "https://liberty-pool.com/api/";
+                }
                 MOADDY = poolobj.getString("address");
                 IdentifiersURL = APIHOST + "miner/" + MOADDY  + "/identifiers";
 

@@ -67,6 +67,7 @@ public class StartupFragment extends Fragment {
         PoolInfos.put("pool", Pool);
         PoolInfos.put("address", MainActivity.MOADDY);
         if (Pool.equals("C3pool")) { MainActivity.APIHOST = "https://api.c3pool.com/"; }
+        else if (Pool.equals("LibertyPool")) { MainActivity.APIHOST = "https://liberty-pool.com/api/"; }
         Gson gson = new Gson();
         String PoolInfosJSON = gson.toJson(PoolInfos);
         ReadWriteGUID moaddyfile = new ReadWriteGUID("moaddy.pls");

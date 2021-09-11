@@ -17,6 +17,10 @@
             android:id="@+id/nav_c3"
             android:icon="@drawable/c3pool"
             android:title="C3Pool" />
+        <item
+            android:id="@+id/nav_liberty"
+            android:icon="@drawable/libertypool"
+            android:title="LibertyPool" />
 
 
         <!---

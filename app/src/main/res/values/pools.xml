@@ -3,5 +3,7 @@
     <string-array name="miningpools">
         <item>MoneroOcean</item>
         <item>C3pool</item>
+        <item>LibertyPool</item>
+
     </string-array>
 </resources>

@@ -81,6 +81,9 @@ public class BlockPaymentsWorker extends Worker {
                 if (pool.equals("C3pool")) {
                     APIHOST = "https://api.c3pool.com/";
                 }
+                else if (pool.equals("LibertyPool")) {
+                    APIHOST = "https://liberty-pool.com/api/";
+                }
                 MOADDY = poolobj.getString("address");
                 BlockPaymentURL = APIHOST + "miner/"+ MOADDY + "/block_payments?limit=100";
                 PaymentURL = APIHOST + "miner/" + MOADDY + "/stats";
