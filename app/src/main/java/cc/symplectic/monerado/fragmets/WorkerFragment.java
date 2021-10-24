@@ -43,6 +43,7 @@ public class WorkerFragment extends Fragment {
     HashMap<String, ArrayList<Double>> WorkerHashChart = new HashMap<String, ArrayList<Double>>();
     ProgressDialog dialog;
 
+    public WorkerFragment() {}
 
     public WorkerFragment(ArrayList al, ArrayList<JSONObject> workerObjects)
     {

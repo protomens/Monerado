@@ -28,6 +28,9 @@ import cc.symplectic.monerado.R;
 public class BlocksFragment extends Fragment {
     private ArrayList<HashMap<String, String>> BlockPayments = new ArrayList<>();
     public final static  String TAG = "BF";
+
+    public BlocksFragment() {}
+
     public BlocksFragment(ArrayList<HashMap<String, String>> BlockPayments) {
         this.BlockPayments = BlockPayments;
         //this.TotalBlockPayment = TotalBlockPayment;

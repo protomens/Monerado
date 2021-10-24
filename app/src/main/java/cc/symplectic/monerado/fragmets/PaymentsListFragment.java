@@ -20,6 +20,7 @@ import cc.symplectic.monerado.R;
 public class PaymentsListFragment extends Fragment {
     ArrayList<HashMap<String, String>> PaymentInfos = new ArrayList<HashMap<String, String>>();
 
+    public PaymentsListFragment() {}
     public PaymentsListFragment(ArrayList<HashMap<String, String>> PaymentInfos) {
         this.PaymentInfos = PaymentInfos;
     }

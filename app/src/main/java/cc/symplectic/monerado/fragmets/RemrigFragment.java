@@ -40,6 +40,8 @@ public class RemrigFragment extends Fragment {
     public String RemrigPASS;
     private ArrayList<String> WorkerNames;
 
+    public RemrigFragment() {}
+
     public RemrigFragment(ArrayList al) {
         this.WorkerNames = al;
     }
@@ -156,13 +158,19 @@ public class RemrigFragment extends Fragment {
         if(Remrig) {
             RemrigWorker remrig = new RemrigWorker(RemrigURL, RemrigUSER, RemrigPASS, false);
             SaveRemrigJSON(v, remrig);
-            RetroRemrigAction("stop", v);
+            try {
+                RetroRemrigAction("stop", v);
+            }
+            catch (Exception e) { e.printStackTrace();}
             Remrig = false;
         }
         else {
             RemrigWorker remrig = new RemrigWorker(RemrigURL, RemrigUSER, RemrigPASS, true);
             SaveRemrigJSON(v, remrig);
-            RetroRemrigAction("start", v);
+            try {
+                RetroRemrigAction("start", v);
+            }
+            catch (Exception e) { e.printStackTrace(); }
             try {
                 UpdateAdapter(v);
             }

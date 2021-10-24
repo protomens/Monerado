@@ -47,6 +47,8 @@ public class PaymentFragment extends Fragment {
     ProgressDialog dialog;
     String PaymentsURL = MainActivity.APIHOST + "miner/" + MainActivity.MOADDY + "/payments";
 
+    public PaymentFragment() {}
+
     public PaymentFragment(HashMap<String, String> PaymentInfos) {
         this.PaymentInfos = PaymentInfos;
     }

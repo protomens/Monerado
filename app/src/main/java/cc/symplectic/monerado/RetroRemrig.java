@@ -37,11 +37,15 @@ public class RetroRemrig  {
         try { Moneradoremrig = parseRemrigJSONFile(remrigs); }
         catch (JSONException e) { e.printStackTrace();}
 
-        BASE_URL = Moneradoremrig.get(WorkerName).getURL();
-        username = Moneradoremrig.get(WorkerName).getUsername();
-        password = Moneradoremrig.get(WorkerName).getPassword();
+        try {
+            BASE_URL = Moneradoremrig.get(WorkerName).getURL();
+            username = Moneradoremrig.get(WorkerName).getUsername();
+            password = Moneradoremrig.get(WorkerName).getPassword();
+        }
+        catch( IllegalArgumentException | NullPointerException e) {
 
-        if (retrofit == null) {
+        }
+        if (retrofit == null && ! BASE_URL.isEmpty() && ! username.isEmpty() && ! password.isEmpty()) {
             retrofit = new retrofit2.Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())

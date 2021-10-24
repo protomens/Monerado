@@ -13,6 +13,7 @@ public class PoolCredFragment extends Fragment {
 
     String pool;
 
+    public PoolCredFragment() {}
     public PoolCredFragment(String pool)
     {
         this.pool = pool;

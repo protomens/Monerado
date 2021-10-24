@@ -62,6 +62,7 @@ public class WorkerStatsFragment extends  Fragment {
     Boolean Remrig = true;
     String RemrigURL, RemrigUSER, RemrigPASS;
 
+    public WorkerStatsFragment() {}
 
     public WorkerStatsFragment(JSONObject workerObject, String al, ArrayList<Double> WorkerHashChart) {
         this.workerObject = workerObject;

@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // battery optimization white-listing
         // GitHub release only! Google will delist us if we use this code.
 
-
+        /*
         ReadWriteGUID mBatteryFile = new ReadWriteGUID("batteryoptimization");
         File batfile = new File(getApplicationContext().getFilesDir().getPath() + "/batteryoptimization");
         int mBatOption;
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
 
-
+        */
 
         /* Will be needed in future releases
          ReadWriteGUID poolfiles = new ReadWriteGUID("pools.txt");

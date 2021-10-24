@@ -18,6 +18,8 @@ import cc.symplectic.monerado.R;
 public class PoolListFragment extends Fragment {
     ArrayList<String> PoolList;
 
+    public PoolListFragment() {}
+
     public PoolListFragment(ArrayList<String> PoolList)
     {
         this.PoolList = PoolList;

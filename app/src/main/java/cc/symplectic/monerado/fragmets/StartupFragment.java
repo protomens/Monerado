@@ -23,6 +23,10 @@ import cc.symplectic.monerado.ReadWriteGUID;
 
 public class StartupFragment extends Fragment {
     ProgressDialog dialog;
+
+
+    public StartupFragment() {}
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
